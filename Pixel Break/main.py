@@ -24,7 +24,8 @@ while not done:
     pygame.display.flip()
 
     # Movement
-    paddle.move(keys, dt)
+    paddle.point_towards(mPos, keys)
+    paddle.handle_input(dt, keys, event)
 
     # Collision
     paddle.collide()

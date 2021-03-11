@@ -8,21 +8,36 @@ class Paddle:
         self.speed = 100
         self.stamina = 100
         self.position = [x, y]
-        self.orientation = 90  # In degrees
+        self.orientation = 180  # In degrees
         self.rotation_rate = 90  # How fast does the ship rotate (in degrees / sec)
-        self.img = pygame.image.load("images\\stamina bar.png")
+        self.img = "images\\"
 
     def draw(self):
+        pygame.draw.rect(self.win, (0, 100, 0), (self.position[0], self.position[1], 100, 10))
+        pygame.draw.rect(self.win, (0, 255, 0), (self.position[0], self.position[1], self.stamina, 10))
         temp_surf = pygame.transform.rotate(self.img, self.orientation - 90)
         self.win.blit(temp_surf, (self.position[0], self.position[1]))
 
-    def move(self, direction, dt):
+    def move(self, dt, direction):
+        if keys[pygame.K_a]:
+            self.position[0] -= self.speed * dt
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LSHIFT and self.stamina >= 1:
+                    self.position[0] = self.position[0] - 50
+                    self.stamina -= 10
         dist = self.speed * direction * dt
         radians = math.radians(self.orientation)
         opposite = -dist * math.sin(radians)
         adjacent = dist * math.cos(radians)
         self.position[0] += adjacent
         self.position[1] += opposite
+
+        if keys[pygame.K_d]:
+            self.position[0] += self.speed * dt
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LSHIFT and self.stamina >= 1:
+                    self.position[0] = 50 + self.position[0]
+                    self.stamina -= 10
 
         # Regen
         if self.stamina <= 100:
@@ -40,20 +55,15 @@ class Paddle:
         """
         self.orientation += direction * self.rotation_rate * delta_time
 
-    def handle_input(self, dt, keys, event):
+    def handle_input(self, delta_time, keys):
         if keys[pygame.K_d]:
-            self.move(1, dt)
+            self.position[0] += self.speed * dt
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LSHIFT and self.stamina >= 1:
                     self.position[0] = 50 + self.position[0]
                     self.stamina -= 10
-        if keys[pygame.K_a]:
-            self.move(-1, dt)
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LSHIFT and self.stamina >= 1:
-                    self.position[0] = self.position[0] - 50
-                    self.stamina -= 10
-                    self.move(-1, dt)
+        if [0]:
+            self.move(1, delta_time, event)
 
     def point_towards(self, target_pt, keys):
         if keys[pygame.K_SPACE]:
