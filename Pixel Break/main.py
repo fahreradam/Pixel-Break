@@ -1,12 +1,14 @@
 import pygame
+import paddle
 pygame.init()
 
-win_w = 800
-win_h = 600
-pygame.display.set_mode((win_w, win_h))
+win_w = 600
+win_h = 800
+win = pygame.display.set_mode((win_w, win_h))
 
 clock = pygame.time.Clock()
 
+paddle = paddle.Paddle(win, 400, 700)
 done = False
 while not done:
     dt = clock.tick() / 1000
@@ -14,6 +16,18 @@ while not done:
     keys = pygame.key.get_pressed()
     mPos = pygame.mouse.get_pos()
     mClick = pygame.mouse.get_pressed()
+
+    # Drawing
+    win.fill((0, 0, 0))
+    paddle.draw()
+
+    pygame.display.flip()
+
+    # Movement
+    paddle.move(keys, dt)
+
+    # Collision
+    paddle.collide()
 
     # Exiting
     if event.type == pygame.KEYDOWN:
