@@ -1,5 +1,6 @@
 import pygame
 import paddle
+import ball
 pygame.init()
 
 win_w = 600
@@ -7,7 +8,7 @@ win_h = 800
 win = pygame.display.set_mode((win_w, win_h))
 
 clock = pygame.time.Clock()
-
+ball = ball.Ball(400, 400, win)
 paddle = paddle.Paddle(win, 400, 700)
 done = False
 while not done:
@@ -20,11 +21,12 @@ while not done:
     # Drawing
     win.fill((0, 0, 0))
     paddle.draw()
+    ball.draw()
 
     pygame.display.flip()
 
     # Movement
-    paddle.point_towards(mPos, keys)
+    paddle.point_towards(mPos, keys, dt)
     paddle.handle_input(dt, keys, event)
 
     # Collision
