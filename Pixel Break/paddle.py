@@ -11,6 +11,8 @@ class Paddle:
         self.orientation = 0  # In degrees
         self.actual_stamina = pygame.image.load("images\\stamina bar.png")
         self.full_stamina = pygame.image.load("images\\stamina bar back.png")
+        self.radius = self.actual_stamina.get_width() / 2
+        self.collide_type = 0
 
     def draw(self):
         final_surf = pygame.transform.scale(self.actual_stamina, (int(self.stamina), 10))
@@ -65,25 +67,17 @@ class Paddle:
         else:
             self.orientation = 0
             self.center = 0
-import pygame
 
 
 
 
 
 
-class Player:
 
 
-    def __init__(self, x, y, img):
-        self.x = x
-        self.y = y
-        self.bar = img
-        self.radius = self.bar.get_width() / 2
-        self.collide_type = 0
     def collision(self, collide_list, dashing=False):
         sfactor = 0.2
-        stamina_bar = pygame.Rect((self.x, self.y, int(self.bar.get_width()), int(self.bar.get_height())))
+        stamina_bar = pygame.Rect((self.position[0], self.position[1], int(self.actual_stamina.get_width()), int(self.actual_stamina.get_height())))
 
         for object in collide_list:
 
@@ -96,21 +90,25 @@ class Player:
             elif object.is_attack and dashing == False:
 
                 if stamina_bar.colliderect(object):
-                    self.bar = pygame.transform.scale(self.bar, (self.bar.get_width() - int(self.bar.get_width() * sfactor)))
+                    self.actual_stamina = pygame.transform.scale(self.actual_stamina, (self.actual_stamina.get_width() - int(self.actual_stamina.get_width() * sfactor)))
     def pixel_collision(self, pixel_list, ball_x, ball_y, ball_width):
 
         for p in pixel_list:
             circle_box = pygame.Rect(int(ball_x - ball_width), int(ball_y - ball_width), ball_width * 2, ball_width * 2)
             if circle_box.colliderect(p.get_rect()):
-                if ball_x + ball_width * 2 < p.right_point and ball_x + ball_width * 2 < p.top_point and ball_x + ball_width * 2 < p.bottom_point:
+                if ball_x < p.right_point[0] and ball_x < p.top_point[0] and ball_x < p.bottom_point[0]:
                     self.collide_type = 1 #LEFT SIDE COLLISION
-                elif ball_x > p.left_point and ball_x > p.top_point and ball_x > p.bottom_point:
+                    pixel_list.remove(p)
+                elif ball_x > p.left_point[0] and ball_x > p.top_point[0] and ball_x > p.bottom_point[0]:
                     self.collide_type = 2 #RIGHT SIDE COLLISION
-                elif ball_y > p.left_point and ball_y > p.top_point and ball_y > p.right_point:
+                    pixel_list.remove(p)
+                elif ball_y > p.left_point[1] and ball_y > p.top_point[1] and ball_y > p.right_point[1]:
                     self.collide_type = 3 #BOTTOM COLLISION
-                else:
+                    pixel_list.remove(p)
+                elif ball_y < p.left_point[1] and ball_y < p.top_point[1] and ball_y < p.right_point[1]:
                     self.collide_type = 4 #TOP COLLISION
-
+                    pixel_list.remove(p)
+        return self.collide_type
     def distance(self, x1, y1, x2, y2):
         space = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
 
