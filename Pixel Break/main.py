@@ -11,7 +11,7 @@ win = pygame.display.set_mode((win_w, win_h))
 clock = pygame.time.Clock()
 ball = ball.Ball(400, 400, win)
 paddle = paddle.Paddle(win, 400, 700)
-cur_map = game_map.Map(starting_map)
+cur_map = game_map.Map("BossMaps\\Litch.tmx")
 done = False
 while not done:
     dt = clock.tick() / 1000
@@ -24,7 +24,9 @@ while not done:
     win.fill((0, 0, 0))
     paddle.draw()
     ball.draw()
-    cur_map.render(game_surf, grid_color=None, debug=self.debug)
+    ball.move(dt)
+    ball.collision(paddle.position, mPos, paddle.stamina)
+    cur_map.render(win, grid_color=None)
 
     pygame.display.flip()
 
