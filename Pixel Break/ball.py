@@ -23,7 +23,7 @@ class Ball:
                 pygame.Rect(paddle_pos[0] - (stamina / 2), paddle_pos[1] - 5, stamina, 10)):
             v = [target_point[0] - paddle_pos[0], target_point[1] - paddle_pos[1]]
             mag_v = (v[0] ** 2 + v[1] ** 2) ** (1 / 2)
-            unit_v = (v[0] / mag_v, v[1] / mag_v)
+            unit_v = [v[0] / mag_v, v[1] / mag_v]
             print(unit_v)
             if unit_v[1] > 0:
                 if unit_v[0] >= 0:
