@@ -10,6 +10,7 @@ class Ball:
         self.img_scale = pygame.transform.scale(self.img, (10, 10))
         self.speed = 500
         self.radius = 5
+        self.is_attack = False
     def draw(self):
         self.win.blit(self.img_scale, self.position)
 

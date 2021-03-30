@@ -13,7 +13,7 @@ class Paddle:
         self.full_stamina = pygame.image.load("images\\stamina bar back.png")
         self.radius = self.actual_stamina.get_width() / 2
         self.collide_type = 0
-
+        self.dashing = False
     def draw(self):
         final_surf = pygame.transform.scale(self.actual_stamina, (int(self.stamina), 10))
         full_stamina = pygame.transform.scale(self.full_stamina, (100, 10))
@@ -56,8 +56,8 @@ class Paddle:
                     self.position[0] = self.position[0] - 100
                     self.stamina -= 10
                     self.dashing = True
-                else:
-                    self.dashing = False
+            else:
+                self.dashing = False
         if self.stamina <= 100:
             self.stamina += 5 * dt
 
@@ -85,7 +85,7 @@ class Paddle:
         for object in collide_list:
 
             if not object.is_attack:
-                circle_box = pygame.Rect(int(object.x - object.radius), int(object.y - object.radius), object.radius * 2, object.radius * 2)
+                circle_box = pygame.Rect(int(object.position[0] - object.radius), int(object.position[1] - object.radius), object.radius * 2, object.radius * 2)
                 if stamina_bar.colliderect(circle_box):
                     self.ball_bounce = True
 
@@ -94,22 +94,22 @@ class Paddle:
 
                 if stamina_bar.colliderect(object):
                     self.actual_stamina = pygame.transform.scale(self.actual_stamina, (self.actual_stamina.get_width() - int(self.actual_stamina.get_width() * sfactor)))
-    def pixel_collision(self, pixel_list, ball_x, ball_y, ball_width, direction_tuple):
+    def pixel_collision(self, pixel_list, ball_x, ball_y, ball_width, direction):
 
         for p in pixel_list:
-            circle_box = pygame.Rect(int(ball_x - ball_width), int(ball_y - ball_width), ball_width * 2, ball_width * 2)
+            circle_box = pygame.Rect(int(ball_x - ball_width), int(ball_y - ball_width), 10, 10)
             if circle_box.colliderect(p.get_rect()):
                 if ball_x < p.right_point[0] and ball_x < p.top_point[0] and ball_x < p.bottom_point[0]:
-                    direction_tuple[0] *= -1
+                    direction[0] *= -1
                     pixel_list.remove(p)
                 elif ball_x > p.left_point[0] and ball_x > p.top_point[0] and ball_x > p.bottom_point[0]:
-                    direction_tuple[0] *= -1
+                    direction[0] *= -1
                     pixel_list.remove(p)
                 elif ball_y > p.left_point[1] and ball_y > p.top_point[1] and ball_y > p.right_point[1]:
-                    direction_tuple[1] *= -1
+                    direction[1] *= -1
                     pixel_list.remove(p)
                 elif ball_y < p.left_point[1] and ball_y < p.top_point[1] and ball_y < p.right_point[1]:
-                    direction_tuple[1] *= -1
+                    direction[1] *= -1
                     pixel_list.remove(p)
 
     def distance(self, x1, y1, x2, y2):
