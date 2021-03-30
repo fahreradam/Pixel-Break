@@ -99,17 +99,21 @@ class Paddle:
         for p in pixel_list:
             circle_box = pygame.Rect(int(ball_x - ball_width), int(ball_y - ball_width), 10, 10)
             if circle_box.colliderect(p.get_rect()):
-                if ball_x < p.right_point[0] and ball_x < p.top_point[0] and ball_x < p.bottom_point[0]:
-                    direction[0] = direction[0] * -1
+                if ball_x < p.right_point[0] and ball_x < p.top_point[0] and ball_x < p.bottom_point[0] and ball_x >= p.left_point[0]:
+                    direction[0] = direction[0] * -1 #LEFT
+                    print('1')
                     pixel_list.remove(p)
-                elif ball_x > p.left_point[0] and ball_x > p.top_point[0] and ball_x > p.bottom_point[0]:
-                    direction[0] = direction[0] * -1
+                elif ball_x > p.left_point[0] and ball_x > p.top_point[0] and ball_x > p.bottom_point[0] and ball_x <= p.right_point[0]:
+                    direction[0] = direction[0] * -1 #RIGHT
+                    print("2")
                     pixel_list.remove(p)
-                elif ball_y > p.left_point[1] and ball_y > p.top_point[1] and ball_y > p.right_point[1]:
-                    direction[1] = direction[1] * -1
+                elif ball_y > p.left_point[1] and ball_y > p.top_point[1] and ball_y > p.right_point[1] and ball_y <= p.bottom_point[1]:
+                    direction[1] = direction[1] * -1 #BOTTOM
+                    print('3')
                     pixel_list.remove(p)
-                elif ball_y < p.left_point[1] and ball_y < p.top_point[1] and ball_y < p.right_point[1]:
-                    direction[1] = direction[1] * -1
+                elif ball_y < p.left_point[1] and ball_y < p.top_point[1] and ball_y < p.right_point[1] and ball_y >= p.bottom_point[1]:
+                    direction[1] = direction[1] * -1 #TOP
+                    print('4')
                     pixel_list.remove(p)
 
     def distance(self, x1, y1, x2, y2):
