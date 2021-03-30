@@ -55,6 +55,9 @@ class Paddle:
                 if event.key == pygame.K_LSHIFT and self.stamina >= 10:
                     self.position[0] = self.position[0] - 100
                     self.stamina -= 10
+                    self.dashing = True
+                else:
+                    self.dashing = False
         if self.stamina <= 100:
             self.stamina += 5 * dt
 
@@ -91,24 +94,24 @@ class Paddle:
 
                 if stamina_bar.colliderect(object):
                     self.actual_stamina = pygame.transform.scale(self.actual_stamina, (self.actual_stamina.get_width() - int(self.actual_stamina.get_width() * sfactor)))
-    def pixel_collision(self, pixel_list, ball_x, ball_y, ball_width):
+    def pixel_collision(self, pixel_list, ball_x, ball_y, ball_width, direction_tuple):
 
         for p in pixel_list:
             circle_box = pygame.Rect(int(ball_x - ball_width), int(ball_y - ball_width), ball_width * 2, ball_width * 2)
             if circle_box.colliderect(p.get_rect()):
                 if ball_x < p.right_point[0] and ball_x < p.top_point[0] and ball_x < p.bottom_point[0]:
-                    self.collide_type = 1 #LEFT SIDE COLLISION
+                    direction_tuple[0] *= -1
                     pixel_list.remove(p)
                 elif ball_x > p.left_point[0] and ball_x > p.top_point[0] and ball_x > p.bottom_point[0]:
-                    self.collide_type = 2 #RIGHT SIDE COLLISION
+                    direction_tuple[0] *= -1
                     pixel_list.remove(p)
                 elif ball_y > p.left_point[1] and ball_y > p.top_point[1] and ball_y > p.right_point[1]:
-                    self.collide_type = 3 #BOTTOM COLLISION
+                    direction_tuple[1] *= -1
                     pixel_list.remove(p)
                 elif ball_y < p.left_point[1] and ball_y < p.top_point[1] and ball_y < p.right_point[1]:
-                    self.collide_type = 4 #TOP COLLISION
+                    direction_tuple[1] *= -1
                     pixel_list.remove(p)
-        return self.collide_type
+
     def distance(self, x1, y1, x2, y2):
         space = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
 

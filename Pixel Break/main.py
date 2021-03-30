@@ -13,12 +13,24 @@ ball = ball.Ball(400, 400, win)
 paddle = paddle.Paddle(win, 400, 700)
 cur_map = game_map.Map("BossMaps\\Litch.tmx")
 done = False
+collide_list = [ball]
 while not done:
     dt = clock.tick() / 1000
     event = pygame.event.poll()
     keys = pygame.key.get_pressed()
     mPos = pygame.mouse.get_pos()
     mClick = pygame.mouse.get_pressed()
+
+    # Movement
+    paddle.point_towards(mPos, keys, dt)
+    paddle.handle_input(dt, keys, event)
+
+    # Collision
+    paddle.collision(collide_list, paddle.dashing)
+    paddle.pixel_collision(cur_map.bricks, ball.position[0], ball.position[1], 5, ball.direction)
+
+
+
 
     # Drawing
     win.fill((0, 0, 0))
@@ -30,12 +42,6 @@ while not done:
 
     pygame.display.flip()
 
-    # Movement
-    paddle.point_towards(mPos, keys, dt)
-    paddle.handle_input(dt, keys, event)
-
-    # Collision
-    paddle.collide()
 
     # Exiting
     if event.type == pygame.KEYDOWN:

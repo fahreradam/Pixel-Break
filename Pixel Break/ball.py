@@ -9,7 +9,7 @@ class Ball:
         self.img = pygame.image.load("images\\Ball.png")
         self.img_scale = pygame.transform.scale(self.img, (10, 10))
         self.speed = 500
-
+        self.radius = 5
     def draw(self):
         self.win.blit(self.img_scale, self.position)
 
