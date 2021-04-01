@@ -34,7 +34,7 @@ class Vector(object):
 
     def mag(self):
         """Returns the norm of the Vector"""
-        if self.p_norm == 2:
+        if self.p_norm != "infinity":
             return float((((abs(self.data[0])) ** self.p_norm) + ((abs(self.data[1])) ** self.p_norm) + (
                     (abs(self.data[2])) ** self.p_norm)) ** 1 / self.p_norm)
         else:
@@ -61,6 +61,17 @@ class Vector(object):
             else:
                 i += 1
         return True
+
+    def dot(self, v1, v2):
+        """Preforming the dot product"""
+        if v1.dim == v2.dim:
+            i = 0
+            sum = 0
+            while i < v1.dim:
+                d = v1[i] * v2[i]
+                sum += d
+                i += 1
+            return sum
 
     def i(self):
         """Converts the Vector into a coordinate"""

@@ -1,4 +1,5 @@
 import pygame
+import random
 
 class Brick:
     def __init__(self, pos, wh, code):
@@ -12,6 +13,9 @@ class Brick:
         self.left_point     = (pos[0],  pos[1] + half_y)
         self.rect = pygame.Rect(pos[0], pos[1], wh[0], wh[1])
         self.code = code
+        self.powerup = None
+        if random.randint(0, 100) == 100:
+            self.powerup = "Yes"
 
     def get_rect(self):
         return self.rect

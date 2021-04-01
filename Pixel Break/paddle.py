@@ -5,7 +5,7 @@ import math
 class Paddle:
     def __init__(self, win, x, y):
         self.win = win
-        self.speed = 100
+        self.speed = 200
         self.stamina = 100
         self.position = [x, y]
         self.orientation = 0  # In degrees
@@ -36,8 +36,10 @@ class Paddle:
     def collide(self):
         if self.position[0] - 50 <= 0:
             self.position[0] = 50
-        if self.position[0] + self.stamina >= self.win.get_width():
-            self.position[0] = self.win.get_width() - self.stamina
+            print(1)
+        if self.position[0] + 50 >= self.win.get_width():
+            self.position[0] = self.win.get_width() - 50
+            print(2)
 
     def handle_input(self, dt, keys, event):
         if keys[pygame.K_d]:

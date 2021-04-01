@@ -28,6 +28,7 @@ while not done:
     # Collision
     paddle.collision(collide_list, paddle.dashing)
     paddle.pixel_collision(cur_map.bricks, ball.position[0], ball.position[1], 5, ball.direction)
+    paddle.collide()
 
 
 
