@@ -184,7 +184,7 @@ class Map:
                 for col_num in range(start_tile_x, end_tile_x + 1):
                     code = row[col_num]
                     if code != 0:
-                        self.bricks.append(bricks.Brick((x,y),(8, 8),code))
+                        self.bricks.append(bricks.Brick([x,y],(8, 8),code))
                     x += self.tile_width
                 y += self.tile_height
 

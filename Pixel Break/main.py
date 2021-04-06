@@ -9,6 +9,8 @@ pygame.init()
 win_w = 600
 win_h = 800
 win = pygame.display.set_mode((win_w, win_h))
+bachground = pygame.Surface((win_w, win_h))
+boss_screen = pygame.Surface((win_w, win_h))
 attk_exists = False
 attk_timer = 2
 attk_type = 0
@@ -16,6 +18,7 @@ clock = pygame.time.Clock()
 ball = ball.Ball(400, 400, win)
 paddle = paddle.Paddle(win, 400, 700)
 cur_map = game_map.Map("BossMaps\\Litch.tmx")
+background = pygame.image.load("images\\Background.png")
 done = False
 collide_list = [ball]
 while not done:
@@ -28,10 +31,14 @@ while not done:
     # Movement
     paddle.point_towards(mPos, keys, dt)
     paddle.handle_input(dt, keys, event)
+    # ball.shadow(dt, paddle.position)
 
     # Collision
     paddle.collision(collide_list, paddle.dashing)
+    # paddle.pixel_collision(cur_map.bricks, ball.shadow_ball_pos[0], ball.shadow_ball_pos[1], 5, ball.shadow_dir)
+
     paddle.pixel_collision(cur_map.bricks, ball.position[0], ball.position[1], 5, ball.direction)
+
     paddle.collide()
 
 
@@ -41,7 +48,8 @@ while not done:
 
 
     # Drawing
-    win.fill((0, 0, 0))
+    win.blit(bachground, (0, 0))
+    bachground.blit(background, (0, 0))
     paddle.draw()
     ball.draw()
     ball.move(dt)

@@ -1,12 +1,14 @@
 import pygame
 import vector
 
+
 class Ball:
     def __init__(self, x, y, surf):
         self.position = [x, y]
         self.win = surf
         self.direction = [1, 1]
         self.img = pygame.image.load("images\\Ball.png")
+        self.shadow_ball = pygame.image.load("images\\shadow ball.png")
         self.img_scale = pygame.transform.scale(self.img, (10, 10))
         self.speed = 250
         self.radius = 5
@@ -23,6 +25,11 @@ class Ball:
         self.life_lost = 0
         # game over screen --
         self.game_over_img = pygame.image.load("images\\game over.png")
+        self.end = False
+        self.shadow_ball_pos = [x, y]
+        self.shadow_dir = [1, 1]
+        self.shadow_speed = 500
+        self.stay = False
 
     def draw(self):
         self.win.blit(self.img_scale, self.position)
@@ -33,10 +40,37 @@ class Ball:
             self.draw_lives_2()
         elif self.life_lost == 2:
             self.win.blit(self.life_img_all[2], (self.win.get_width() - 30, self.win.get_height() - 790))
+        # self.win.blit(self.shadow_ball, self.shadow_ball_pos)
 
     def move(self, dt):
         self.position = [(self.position[0] + self.direction[0] * dt * self.speed), (self.position[1] + self.direction[1]
                                                                                     * dt * self.speed)]
+
+    def shadow(self, dt, paddle_pos):
+        if not self.end:
+            self.shadow_ball_pos = [(self.shadow_ball_pos[0] + self.shadow_dir[0] * dt * self.shadow_speed),
+                                    (self.shadow_ball_pos[1] +
+                                     self.shadow_dir[1] * dt * self.shadow_speed)]
+        if self.shadow_ball_pos[1] >= paddle_pos[1]:
+            self.end = True
+            self.stay = True
+
+        if self.stay:
+            self.shadow_ball_pos = self.position
+            self.shadow_dir = self.direction
+
+        if self.shadow_ball_pos[0] <= 0:
+            self.shadow_ball_pos[0] = 0
+            self.shadow_dir = [-1 * self.shadow_dir[0], self.shadow_dir[1]]
+        if self.shadow_ball_pos[0] + 10 >= self.win.get_width():
+            self.shadow_ball_pos[0] = self.win.get_width() - 10
+            self.shadow_dir = [-1 * self.shadow_dir[0], self.shadow_dir[1]]
+        if self.shadow_ball_pos[1] <= 0:
+            self.shadow_ball_pos[1] = 0
+            self.shadow_dir = [self.shadow_dir[0], -1 * self.shadow_dir[1]]
+        if self.shadow_ball_pos[1] + 10 >= self.win.get_height():
+            self.shadow_ball_pos[1] = self.win.get_height() - 10
+            self.shadow_dir = [self.shadow_dir[0], -1 * self.shadow_dir[1]]
 
     def dot(self, v1, v2):
         """Preforming the dot product"""
@@ -59,19 +93,22 @@ class Ball:
         e = self.dot(dir_to_ball, unit_perp)
 
         if not pygame.key.get_pressed()[pygame.K_SPACE]:
+            self.end = False
+            self.stay = False
             if pygame.Rect(self.position[0], self.position[1], 10, 10).colliderect(
                     pygame.Rect(paddle_pos[0] - (stamina / 2), paddle_pos[1] - 5, stamina, 10)):
 
-                if not (abs(d) > 15 or abs(e) > int(stamina)):
+                if unit_v[1] > 0:
+                    if unit_v[0] >= 0:
+                        self.direction = [1, -1]
+                    if unit_v[0] <= 0:
+                        self.direction = [-1, -1]
+                else:
+                    self.direction = unit_v
 
-                    if unit_v[1] > 0:
-                        if unit_v[0] >= 0:
-                            self.direction = [1, -1]
-                        if unit_v[0] <= 0:
-                            self.direction = [-1, -1]
-                    else:
-                        self.direction = unit_v
         elif pygame.key.get_pressed()[pygame.K_SPACE]:
+            self.end = False
+            self.stay = False
             if not (abs(d) > 15 or abs(e) > int(stamina)):
                 if unit_v[1] > 0:
                     if unit_v[0] >= 0:
@@ -91,8 +128,8 @@ class Ball:
             self.position[1] = 0
             self.direction = [self.direction[0], -1 * self.direction[1]]
         if self.position[1] + 10 >= self.win.get_height():
-            #self.position[1] = self.win.get_height() - 10
-            #self.direction = [self.direction[0], -1 * self.direction[1]]
+            # self.position[1] = self.win.get_height() - 10
+            # self.direction = [self.direction[0], -1 * self.direction[1]]
             self.life_lost += 1
             self.position = paddle_pos
 
