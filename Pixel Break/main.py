@@ -40,6 +40,7 @@ while not done:
         attk_type = random.randint(1, 4)
         left_attk = Attacks.Attacks(attk_type, paddle.actual_stamina.get_height(), paddle.actual_stamina.get_width,
                                     600, 800, paddle.position[0])
+        collide_list.append(left_attk)
         attk_exists = True
 
 
@@ -62,11 +63,9 @@ while not done:
     else:
         attk_exists = False
         attk_timer = 2
-<<<<<<< HEAD
 
-=======
     ball.game_over()
->>>>>>> 77047267732891280193d2d24015b5ef96914b4e
+
 
 
     pygame.display.flip()
