@@ -81,6 +81,7 @@ class Paddle:
 
 
     def collision(self, collide_list, dashing=False):
+
         sfactor = 0.2
         stamina_bar = pygame.Rect((self.position[0], self.position[1], int(self.actual_stamina.get_width()), int(self.actual_stamina.get_height())))
 
@@ -94,7 +95,7 @@ class Paddle:
 
             elif object.is_attack and dashing == False:
 
-                if stamina_bar.colliderect(object):
+                if stamina_bar.colliderect(object.rect):
                     self.actual_stamina = pygame.transform.scale(self.actual_stamina, (self.actual_stamina.get_width() - int(self.actual_stamina.get_width() * sfactor)))
     def pixel_collision(self, pixel_list, ball_x, ball_y, ball_width, direction):
 
