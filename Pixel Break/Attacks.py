@@ -21,11 +21,11 @@ class Attacks:
         self.blink_timer2 = 0
         if self.direction == 1:
             self.x = 1
-            self.y = paddle_height
+            self.y = paddle_height + 15
             self.high = 30
         if self.direction == 2:
             self.x = screen_w
-            self.y = paddle_height
+            self.y = paddle_height + 30
             self.high = 30
         if self.direction == 3:
             self.y = screen_h
