@@ -12,7 +12,7 @@ class Attacks:
         self.wide = 0
         self.high = 0
         self.damage = 0
-        self.speed = 700
+        self.speed = 500
         self.direction = direction
         self.attk_timer = 7
         self.y = 0
@@ -22,14 +22,14 @@ class Attacks:
         if self.direction == 1:
             self.x = 1
             self.y = paddle_height
-            self.high = 60
+            self.high = 30
         if self.direction == 2:
             self.x = screen_w
             self.y = paddle_height
-            self.high = 60
+            self.high = 30
         if self.direction == 3:
             self.y = screen_h
-            self.wide = 60
+            self.wide = 30
             lr = random.randint(1, 2)
             if lr == 1:
                 self.x = 400
@@ -37,7 +37,7 @@ class Attacks:
                 self.x = 200
         if self.direction == 4:
             self.y = 1
-            self.wide = 60
+            self.wide = 30
             lr = random.randint(1, 2)
             if lr == 1:
                 self.x = paddle_x - 100
