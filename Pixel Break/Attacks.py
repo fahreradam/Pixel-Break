@@ -90,33 +90,33 @@ class Attacks:
 
 
 
-done = False
-win = pygame.display.set_mode((800, 600))
-clock = pygame.time.Clock()
-attk_exists = False
-attk_timer = 2
-attk_type = 0
-while not done:
-    dt = clock.tick() / 1000
-    win.fill((0, 0, 0))
+#done = False
+#win = pygame.display.set_mode((800, 600))
+#clock = pygame.time.Clock()
+#attk_exists = False
+#attk_timer = 2
+#attk_type = 0
+#while not done:
+ #   dt = clock.tick() / 1000
+  #  win.fill((0, 0, 0))
 
-    if attk_exists == False:
-        attk_timer -= 1 * dt
-        attk_type = 0
-    if attk_timer <= 0:
-        attk_type = random.randint(1, 4)
-        left_attk = Attacks(attk_type, 400, 100, 800, 600, 400)
-        attk_exists = True
+  #  if attk_exists == False:
+   #     attk_timer -= 1 * dt
+    #    attk_type = 0
+    #if attk_timer <= 0:
+     #   attk_type = random.randint(1, 4)
+      #  left_attk = Attacks(attk_type, 400, 100, 800, 600, 400)
+       # attk_exists = True
 
-    if attk_exists == True:
-        left_attk.update(dt)
-        if left_attk.direction != 0:
+    #if attk_exists == True:
+     #   left_attk.update(dt)
+      #  if left_attk.direction != 0:
 
-            left_attk.draw(win)
+       #     left_attk.draw(win)
 
-        else:
-            attk_exists = False
-        attk_timer = 2
+        #else:
+         #   attk_exists = False
+        #attk_timer = 2
 
-    pygame.display.flip()
-pygame.quit()
+    #pygame.display.flip()
+#pygame.quit()
