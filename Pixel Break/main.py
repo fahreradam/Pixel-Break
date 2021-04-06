@@ -54,11 +54,15 @@ while not done:
     ball.move(dt)
     ball.collision(paddle.position, mPos, paddle.stamina)
     cur_map.render(win, grid_color=None)
+<<<<<<< HEAD
     if attk_exists == True:
         left_attk.update(dt)
         if left_attk.direction != 0:
 
             left_attk.draw(win)
+=======
+    ball.game_over()
+>>>>>>> 77047267732891280193d2d24015b5ef96914b4e
 
         else:
             attk_exists = False
