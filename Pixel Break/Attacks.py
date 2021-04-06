@@ -40,9 +40,9 @@ class Attacks:
             self.wide = 60
             lr = random.randint(1, 2)
             if lr == 1:
-                self.x = 400
+                self.x = paddle_x - 100
             if lr == 2:
-                self.x = 200
+                self.x = paddle_x + paddle_width + 100
 
     def update(self, dt):
 

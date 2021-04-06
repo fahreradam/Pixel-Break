@@ -55,7 +55,7 @@ while not done:
         if attk_timer <= 0:
 
             attk_type = random.randint(1, 4)
-            left_attk = Attacks.Attacks(attk_type, paddle.position[1], paddle.actual_stamina.get_width,
+            left_attk = Attacks.Attacks(attk_type, paddle.position[1], paddle.actual_stamina.get_width(),
                                         600, 800, paddle.position[0])
             collide_list.append(left_attk)
             attk_exists = True
