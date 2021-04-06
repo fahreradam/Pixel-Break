@@ -21,28 +21,28 @@ class Attacks:
         self.blink_timer2 = 0
         if self.direction == 1:
             self.x = 1
-            self.y = paddle_height + 30
+            self.y = paddle_height
             self.high = 60
         if self.direction == 2:
             self.x = screen_w
-            self.y = paddle_height + 30
+            self.y = paddle_height
             self.high = 60
         if self.direction == 3:
             self.y = screen_h
             self.wide = 60
             lr = random.randint(1, 2)
             if lr == 1:
-                self.x = (paddle_x + paddle_width) + 75
+                self.x = 400
             if lr == 2:
-                self.x = (paddle_x - 75) - self.wide
+                self.x = 200
         if self.direction == 4:
             self.y = 1
             self.wide = 60
             lr = random.randint(1, 2)
             if lr == 1:
-                self.x = (paddle_x + paddle_width) + 75
+                self.x = 400
             if lr == 2:
-                self.x = (paddle_x - 75) - self.wide
+                self.x = 200
 
     def update(self, dt):
 
@@ -90,33 +90,3 @@ class Attacks:
 
 
 
-#done = False
-#win = pygame.display.set_mode((800, 600))
-#clock = pygame.time.Clock()
-#attk_exists = False
-#attk_timer = 2
-#attk_type = 0
-#while not done:
- #   dt = clock.tick() / 1000
-  #  win.fill((0, 0, 0))
-
-  #  if attk_exists == False:
-   #     attk_timer -= 1 * dt
-    #    attk_type = 0
-    #if attk_timer <= 0:
-     #   attk_type = random.randint(1, 4)
-      #  left_attk = Attacks(attk_type, 400, 100, 800, 600, 400)
-       # attk_exists = True
-
-    #if attk_exists == True:
-     #   left_attk.update(dt)
-      #  if left_attk.direction != 0:
-
-       #     left_attk.draw(win)
-
-        #else:
-         #   attk_exists = False
-        #attk_timer = 2
-
-    #pygame.display.flip()
-#pygame.quit()

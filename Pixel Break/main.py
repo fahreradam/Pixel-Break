@@ -33,15 +33,7 @@ while not done:
     paddle.collision(collide_list, paddle.dashing)
     paddle.pixel_collision(cur_map.bricks, ball.position[0], ball.position[1], 5, ball.direction)
     paddle.collide()
-    if attk_exists == False:
-        attk_timer -= 1 * dt
-        attk_type = 0
-    if attk_timer <= 0:
-        attk_type = random.randint(1, 4)
-        left_attk = Attacks.Attacks(attk_type, paddle.actual_stamina.get_height(), paddle.actual_stamina.get_width,
-                                    600, 800, paddle.position[0])
-        collide_list.append(left_attk)
-        attk_exists = True
+
 
 
 
@@ -55,14 +47,29 @@ while not done:
     ball.move(dt)
     ball.collision(paddle.position, mPos, paddle.stamina)
     cur_map.render(win, grid_color=None)
+    if attk_exists == False:
+
+        attk_timer -= 1 * dt
+        attk_type = 0
+        print(attk_timer)
+        if attk_timer <= 0:
+
+            attk_type = random.randint(1, 4)
+            left_attk = Attacks.Attacks(attk_type, paddle.position[1], paddle.actual_stamina.get_width,
+                                        600, 800, paddle.position[0])
+            collide_list.append(left_attk)
+            attk_exists = True
+
     if attk_exists == True:
+
         left_attk.update(dt)
+
         if left_attk.direction != 0:
 
             left_attk.draw(win)
-    else:
-        attk_exists = False
-        attk_timer = 2
+        else:
+            attk_exists = False
+            attk_timer = 2
 
     ball.game_over()
 

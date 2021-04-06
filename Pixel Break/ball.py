@@ -63,7 +63,7 @@ class Ball:
                     pygame.Rect(paddle_pos[0] - (stamina / 2), paddle_pos[1] - 5, stamina, 10)):
 
                 if not (abs(d) > 15 or abs(e) > int(stamina)):
-                    print(stamina)
+
                     if unit_v[1] > 0:
                         if unit_v[0] >= 0:
                             self.direction = [1, -1]
