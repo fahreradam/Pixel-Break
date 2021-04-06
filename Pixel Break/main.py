@@ -40,6 +40,7 @@ while not done:
     ball.move(dt)
     ball.collision(paddle.position, mPos, paddle.stamina)
     cur_map.render(win, grid_color=None)
+    ball.game_over()
 
     pygame.display.flip()
 
