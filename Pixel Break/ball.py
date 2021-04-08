@@ -30,6 +30,12 @@ class Ball:
         self.shadow_dir = [1, 1]
         self.shadow_speed = 500
         self.stay = False
+        self.powerup = None
+        self.time = 0
+        self.bounce = 0
+        self.usable = []
+        self.current_powerup = None
+        self.point = 0
 
     def draw(self):
         self.win.blit(self.img_scale, self.position)
@@ -103,8 +109,12 @@ class Ball:
                         self.direction = [1, -1]
                     if unit_v[0] <= 0:
                         self.direction = [-1, -1]
+                    if self.current_powerup == "Heavy":
+                        self.bounce = self.bounce + 1
                 else:
                     self.direction = unit_v
+                    if self.current_powerup == "Heavy":
+                        self.bounce = self.bounce + 1
 
         elif pygame.key.get_pressed()[pygame.K_SPACE]:
             self.end = False
@@ -115,8 +125,12 @@ class Ball:
                         self.direction = [1, -1]
                     if unit_v[0] <= 0:
                         self.direction = [-1, -1]
+                    if self.current_powerup == "Heavy":
+                        self.bounce = self.bounce + 1
                 else:
                     self.direction = unit_v
+                    if self.current_powerup == "Heavy":
+                        self.bounce = self.bounce + 1
 
         if self.position[0] <= 0:
             self.position[0] = 0
@@ -146,3 +160,44 @@ class Ball:
         if self.life_lost == self.life_all:
             self.win.fill((0, 0, 0))
             self.win.blit(self.game_over_img, (0, 0))
+
+    def game_win(self, health):
+        if health <= 0:
+            self.win.fill((0, 0, 0))
+            self.win.blit(self.game_over_img, (0, 0))
+
+    def power(self, dt):
+        if len(self.usable) <= 1 and not self.powerup is None:
+            self.usable.append(self.powerup)
+            self.powerup = None
+        if len(self.usable) >= 1:
+            if self.usable[0] == "Heavy":
+                self.current_powerup = "Heavy"
+                self.heavy()
+            elif self.usable[0] == "Speed":
+                self.current_powerup = "Speed"
+                self.speedy_boy(dt)
+            else:
+                pass
+
+    def heavy(self):
+        if self.position[0] <= 0:
+            self.bounce = self.bounce + 1
+        if self.position[0] + 10 >= self.win.get_width():
+            self.bounce = self.bounce + 1
+        if self.position[1] <= 0:
+            self.bounce = self.bounce + 1
+        if self.position[1] + 10 >= self.win.get_height():
+            self.usable.pop(0)
+        if self.bounce >= 2:
+            self.usable.pop(0)
+            self.bounce = 0
+
+    def speedy_boy(self, dt):
+        if self.time >= 2:
+            self.usable.pop(0)
+            self.speed = 250
+            self.time = 0
+        else:
+            self.speed = 500
+            self.time += dt
