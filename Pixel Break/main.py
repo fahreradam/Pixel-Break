@@ -62,15 +62,18 @@ while not done:
         print(attk_timer)
         if attk_timer <= 0:
 
-            attk_type = random.randint(1, 4)
+            attk_type = 6
+
+
             left_attk = Attacks.Attacks(attk_type, paddle.position[1], paddle.actual_stamina.get_width(),
-                                        600, 800, paddle.position[0])
+                                        600, 800, paddle.position[0], 0)
+
             collide_list.append(left_attk)
             attk_exists = True
 
     if attk_exists == True:
 
-        left_attk.update(dt)
+        left_attk.update(dt, win)
 
         if left_attk.direction != 0:
 
@@ -78,6 +81,8 @@ while not done:
         else:
             attk_exists = False
             attk_timer = 2
+
+
 
     ball.game_over()
 
