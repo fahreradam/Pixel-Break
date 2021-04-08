@@ -3,7 +3,7 @@ import math
 
 
 class Paddle:
-    def __init__(self, win, x, y):
+    def __init__(self, win, x, y, ball):
         self.win = win
         self.speed = 200
         self.stamina = 100
@@ -14,6 +14,7 @@ class Paddle:
         self.radius = self.actual_stamina.get_width() / 2
         self.collide_type = 0
         self.dashing = False
+        self.ball = ball
 
     def draw(self):
         final_surf = pygame.transform.scale(self.actual_stamina, (int(self.stamina), 10))
@@ -37,10 +38,8 @@ class Paddle:
     def collide(self):
         if self.position[0] - 50 <= 0:
             self.position[0] = 50
-            print(1)
         if self.position[0] + 50 >= self.win.get_width():
             self.position[0] = self.win.get_width() - 50
-            print(2)
 
     def handle_input(self, dt, keys, event):
         if keys[pygame.K_d]:
@@ -98,26 +97,38 @@ class Paddle:
         for p in pixel_list:
             circle_box = pygame.Rect(int(ball_x - ball_width), int(ball_y - ball_width), 10, 10)
             if circle_box.colliderect(p.get_rect()):
-                if ball_x < p.right_point[0] and ball_x < p.top_point[0] and ball_x < p.bottom_point[0] and ball_x >= \
-                        p.left_point[0]:
-                    direction[0] = direction[0] * -1  # LEFT
-                    print('1')
-                    pixel_list.remove(p)
-                elif ball_x > p.left_point[0] and ball_x > p.top_point[0] and ball_x > p.bottom_point[0] and ball_x <= \
-                        p.right_point[0]:
-                    direction[0] = direction[0] * -1  # RIGHT
-                    print("2")
-                    pixel_list.remove(p)
-                elif ball_y > p.left_point[1] and ball_y > p.top_point[1] and ball_y > p.right_point[1] and ball_y <= \
-                        p.bottom_point[1]:
-                    direction[1] = direction[1] * -1  # BOTTOM
-                    print('3')
-                    pixel_list.remove(p)
-                elif ball_y < p.left_point[1] and ball_y < p.top_point[1] and ball_y < p.right_point[1] and ball_y >= \
-                        p.bottom_point[1]:
-                    direction[1] = direction[1] * -1  # TOP
-                    print('4')
-                    pixel_list.remove(p)
+                if self.ball.current_powerup == "Heavy":
+                    if ball_x < p.right_point[0] and ball_x < p.top_point[0] and ball_x < p.bottom_point[0] and ball_x >= \
+                            p.left_point[0]:
+                        pixel_list.remove(p)
+                    elif ball_x > p.left_point[0] and ball_x > p.top_point[0] and ball_x > p.bottom_point[0] and ball_x <= \
+                            p.right_point[0]:
+                        pixel_list.remove(p)
+                    elif ball_y > p.left_point[1] and ball_y > p.top_point[1] and ball_y > p.right_point[1] and ball_y <= \
+                            p.bottom_point[1]:
+                        pixel_list.remove(p)
+                    elif ball_y < p.left_point[1] and ball_y < p.top_point[1] and ball_y < p.right_point[1] and ball_y >= \
+                            p.bottom_point[1]:
+                        pixel_list.remove(p)
+                else:
+                    if ball_x < p.right_point[0] and ball_x < p.top_point[0] and ball_x < p.bottom_point[0] and ball_x >= \
+                            p.left_point[0]:
+                        direction[0] = direction[0] * -1  # LEFT
+                        pixel_list.remove(p)
+                    elif ball_x > p.left_point[0] and ball_x > p.top_point[0] and ball_x > p.bottom_point[0] and ball_x <= \
+                            p.right_point[0]:
+                        direction[0] = direction[0] * -1  # RIGHT
+                        pixel_list.remove(p)
+                    elif ball_y > p.left_point[1] and ball_y > p.top_point[1] and ball_y > p.right_point[1] and ball_y <= \
+                            p.bottom_point[1]:
+                        direction[1] = direction[1] * -1  # BOTTOM
+                        pixel_list.remove(p)
+                    elif ball_y < p.left_point[1] and ball_y < p.top_point[1] and ball_y < p.right_point[1] and ball_y >= \
+                            p.bottom_point[1]:
+                        direction[1] = direction[1] * -1  # TOP
+                        pixel_list.remove(p)
+                self.ball.powerup = p.powerup
+                self.ball.point += 5
 
     def distance(self, x1, y1, x2, y2):
         space = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5

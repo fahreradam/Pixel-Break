@@ -4,6 +4,7 @@ import ball
 import game_map
 import Attacks
 import random
+import bricks
 pygame.init()
 
 win_w = 600
@@ -16,7 +17,7 @@ attk_timer = 2
 attk_type = 0
 clock = pygame.time.Clock()
 ball = ball.Ball(400, 400, win)
-paddle = paddle.Paddle(win, 400, 700)
+paddle = paddle.Paddle(win, 400, 700, ball)
 cur_map = game_map.Map("BossMaps\\Litch.tmx")
 background = pygame.image.load("images\\Background.png")
 done = False
@@ -27,6 +28,7 @@ while not done:
     keys = pygame.key.get_pressed()
     mPos = pygame.mouse.get_pos()
     mClick = pygame.mouse.get_pressed()
+    health = len(cur_map.bricks)
 
     # Movement
     paddle.point_towards(mPos, keys, dt)
@@ -55,11 +57,11 @@ while not done:
     ball.move(dt)
     ball.collision(paddle.position, mPos, paddle.stamina)
     cur_map.render(win, grid_color=None)
+    ball.power(dt)
     if attk_exists == False:
 
         attk_timer -= 1 * dt
         attk_type = 0
-        print(attk_timer)
         if attk_timer <= 0:
 
             attk_type = 6
@@ -83,6 +85,10 @@ while not done:
             attk_timer = 2
 
 
+
+
+
+    ball.game_win(health)
 
     ball.game_over()
 
