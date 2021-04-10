@@ -157,7 +157,7 @@ class Ball:
         self.win.blit(self.life_img_all[1], (self.win.get_width() - 60, self.win.get_height() - 790))
 
     def game_over(self):
-        if self.life_lost == self.life_all:
+        if self.life_lost >= self.life_all:
             self.win.fill((0, 0, 0))
             self.win.blit(self.game_over_img, (0, 0))
 
@@ -178,7 +178,7 @@ class Ball:
                 self.current_powerup = "Speed"
                 self.speedy_boy(dt)
             else:
-                pass
+                self.current_powerup = None
 
     def heavy(self):
         if self.position[0] <= 0:
