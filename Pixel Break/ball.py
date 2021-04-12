@@ -13,6 +13,7 @@ class Ball:
         self.speed = 250
         self.radius = 5
         self.is_attack = False
+
         # player life --
         # image
         self.life_img = pygame.image.load("images\\player life.png").convert()
@@ -25,6 +26,9 @@ class Ball:
         self.life_lost = 0
         # game over screen --
         self.game_over_img = pygame.image.load("images\\game over.png")
+        # game win screen --
+        self.game_win_img = pygame.image.load("images\\Game Text - Win.png")
+
         self.end = False
         self.shadow_ball_pos = [x, y]
         self.shadow_dir = [1, 1]
@@ -164,7 +168,7 @@ class Ball:
     def game_win(self, health):
         if health <= 0:
             self.win.fill((0, 0, 0))
-            self.win.blit(self.game_over_img, (0, 0))
+            self.win.blit(self.game_win_img, (self.win.get_width() / 2, self.win.get_height() - 700))
 
     def power(self, dt):
         if len(self.usable) <= 1 and not self.powerup is None:
