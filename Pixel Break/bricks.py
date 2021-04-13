@@ -14,7 +14,7 @@ class Brick:
         self.rect = pygame.Rect(self.pos[0], self.pos[1], wh[0], wh[1])
         self.code = code
         self.powerup = None
-        if random.randint(0, 50) == 50:
+        if random.randint(0, 10) == 10:
             if random.randint(0, 1) == 0:
                 self.powerup = "Heavy"
             elif random.randint(0, 1) == 1:

@@ -57,7 +57,7 @@ while not done:
     ball.move(dt)
     ball.collision(paddle.position, mPos, paddle.stamina)
     cur_map.render(win, grid_color=None)
-    ball.power(dt)
+    ball.power(dt, paddle.position, paddle.stamina, mClick)
     if attk_exists == False:
 
         attk_timer -= 1 * dt

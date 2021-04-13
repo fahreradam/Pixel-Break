@@ -127,8 +127,15 @@ class Paddle:
                             p.bottom_point[1]:
                         direction[1] = direction[1] * -1  # TOP
                         pixel_list.remove(p)
-                self.ball.powerup = p.powerup
-                self.ball.point += 5
+                if p.powerup is not None:
+                    # self.ball.brick_pos = p.pos
+                    self.ball.powerup = p.powerup
+                    self.ball.point += 5
+                else:
+                    p.powerup = None
+                if p.powerup is not None:
+                    self.ball.power_pos.append(p.pos[:])
+
 
     def distance(self, x1, y1, x2, y2):
         space = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5

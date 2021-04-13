@@ -39,7 +39,11 @@ class Ball:
         self.bounce = 0
         self.usable = []
         self.current_powerup = None
+        self.brick_pos = None
         self.point = 0
+        self.power_pos = []
+        self.power_on = False
+
 
     def draw(self):
         self.win.blit(self.img_scale, self.position)
@@ -171,19 +175,42 @@ class Ball:
             self.win.blit(self.game_win_img, (self.win.get_width() / 2 -
                                               self.game_win_img.get_width() / 2, self.win.get_height() - 700))
 
-    def power(self, dt):
-        if len(self.usable) <= 1 and not self.powerup is None:
-            self.usable.append(self.powerup)
-            self.powerup = None
+    def power(self, dt, paddle_pos, stamina, mouse_click):
+        print(len(self.usable))
+
+        for i in self.power_pos:
+            self.win.blit(self.img, i)
+            i[1] += 30 * dt
+            if pygame.Rect(i[0], i[1], 10, 10).colliderect(
+                    pygame.Rect(paddle_pos[0] - (stamina / 2), paddle_pos[1] - 5, stamina, 10)):
+                self.power_pos.remove(i)
+
+                if len(self.usable) <= 1 and not self.powerup is None:
+                    self.usable.append(self.powerup)
+                    self.powerup = None
+            elif i[1] >= self.win.get_height():
+                self.power_pos.remove(i)
+
         if len(self.usable) >= 1:
-            if self.usable[0] == "Heavy":
-                self.current_powerup = "Heavy"
-                self.heavy()
-            elif self.usable[0] == "Speed":
-                self.current_powerup = "Speed"
-                self.speedy_boy(dt)
-            else:
-                self.current_powerup = None
+            if mouse_click[0] and not self.power_on:
+                if self.usable[0] == "Heavy":
+                    self.current_powerup = "Heavy"
+                    self.heavy()
+                elif self.usable[0] == "Speed":
+                    self.current_powerup = "Speed"
+                    self.speedy_boy(dt)
+            if len(self.usable) == 2 and not self.power_on:
+                if mouse_click[2]:
+                    if self.usable[1] == "Heavy":
+                        self.current_powerup = "Heavy"
+                        self.heavy()
+                    elif self.usable[1] == "Speed":
+                        self.current_powerup = "Speed"
+                        self.speedy_boy(dt)
+        else:
+            self.current_powerup = None
+            self.power_on = False
+        print(self.usable)
 
     def heavy(self):
         if self.position[0] <= 0:
@@ -193,8 +220,12 @@ class Ball:
         if self.position[1] <= 0:
             self.bounce = self.bounce + 1
         if self.position[1] + 10 >= self.win.get_height():
+            self.current_powerup = None
+            self.power_on = True
             self.usable.pop(0)
         if self.bounce >= 2:
+            self.current_powerup = None
+            self.power_on = True
             self.usable.pop(0)
             self.bounce = 0
 
@@ -206,3 +237,4 @@ class Ball:
         else:
             self.speed = 500
             self.time += dt
+            self.current_powerup = None
