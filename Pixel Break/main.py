@@ -22,6 +22,7 @@ cur_map = game_map.Map("BossMaps\\Litch.tmx")
 background = pygame.image.load("images\\Background.png")
 done = False
 collide_list = [ball]
+left_attk = None
 while not done:
     dt = clock.tick() / 1000
     event = pygame.event.poll()
@@ -68,9 +69,10 @@ while not done:
 
 
             left_attk = Attacks.Attacks(attk_type, paddle.position[1], paddle.actual_stamina.get_width(),
-                                        600, 800, paddle.position[0], 0)
+                                        600, 800, paddle.position[0], collide_list, paddle.position[1])
 
             collide_list.append(left_attk)
+
             attk_exists = True
 
     if attk_exists == True:
@@ -81,8 +83,23 @@ while not done:
 
             left_attk.draw(win)
         else:
-            attk_exists = False
-            attk_timer = 2
+            if len(collide_list) >= 1 and left_attk.attack2 == None and left_attk.attack3 == None:
+                collide_list.remove(left_attk)
+                attk_exists = False
+                attk_timer = 2
+            if left_attk.attack3 != None:
+                collide_list.remove(left_attk.attack3)
+            if left_attk.attack2 != None:
+                if left_attk.attack2.direction == 0:
+                    collide_list.remove(left_attk.attack2)
+
+                    attk_exists = False
+                    attk_timer = 2
+
+
+
+
+
 
 
 
