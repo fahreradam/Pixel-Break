@@ -186,8 +186,8 @@ class Map:
                     if code != 0:
 						if code == 6 or code == 7:
 							self.bricks.append(bricks.Brick([x,y],(8, 8),code, toughscore = 2))
-							continue
-						self.bricks.append(bricks.Brick([x,y],(8, 8),code))
+                        else:
+						    self.bricks.append(bricks.Brick([x,y],(8, 8),code))
                     x += self.tile_width
                 y += self.tile_height
 
