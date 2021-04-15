@@ -133,8 +133,10 @@ class Paddle:
                     self.ball.point += 5
                 else:
                     p.powerup = None
-                if p.powerup is not None:
-                    self.ball.power_pos.append(p.pos[:])
+                if p.powerup == "Heavy":
+                    self.ball.heavy_pos.append(p.pos[:])
+                if p.powerup == "Speed":
+                    self.ball.speed_pos.append(p.pos[:])
 
 
     def distance(self, x1, y1, x2, y2):

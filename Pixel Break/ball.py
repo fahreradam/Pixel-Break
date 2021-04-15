@@ -9,6 +9,8 @@ class Ball:
         self.direction = [1, 1]
         self.img = pygame.image.load("images\\Ball.png")
         self.shadow_ball = pygame.image.load("images\\shadow ball.png")
+        self.speed_img = pygame.image.load("images\\speed_power_up.png")
+        self.heavy_img = pygame.image.load("images\\heavy_power_up.png")
         self.img_scale = pygame.transform.scale(self.img, (10, 10))
         self.speed = 250
         self.radius = 5
@@ -41,7 +43,10 @@ class Ball:
         self.current_powerup = None
         self.brick_pos = None
         self.point = 0
-        self.power_pos = []
+        self.l_click = False
+        self.r_click = False
+        self.heavy_pos = []
+        self.speed_pos = []
 
 
     def draw(self):
@@ -175,40 +180,54 @@ class Ball:
                                               self.game_win_img.get_width() / 2, self.win.get_height() - 700))
 
     def power(self, dt, paddle_pos, stamina, mouse_click):
-        print(len(self.usable))
 
-        for i in self.power_pos:
-            self.win.blit(self.img, i)
+
+        for i in self.heavy_pos:
+            self.win.blit(self.heavy_img, i)
             i[1] += 30 * dt
             if pygame.Rect(i[0], i[1], 10, 10).colliderect(
                     pygame.Rect(paddle_pos[0] - (stamina / 2), paddle_pos[1] - 5, stamina, 10)):
-                self.power_pos.remove(i)
-
+                self.heavy_pos.remove(i)
                 if len(self.usable) <= 1 and not self.powerup is None:
                     self.usable.append(self.powerup)
                     self.powerup = None
             elif i[1] >= self.win.get_height():
-                self.power_pos.remove(i)
+                self.heavy_pos.remove(i)
+        for i in self.speed_pos:
+            self.win.blit(self.speed_img, i)
+            i[1] += 30 * dt
+            if pygame.Rect(i[0], i[1], 10, 10).colliderect(
+                    pygame.Rect(paddle_pos[0] - (stamina / 2), paddle_pos[1] - 5, stamina, 10)):
+                self.speed_pos.remove(i)
+                if len(self.usable) <= 1 and not self.powerup is None:
+                    self.usable.append(self.powerup)
+                    self.powerup = None
+            elif i[1] >= self.win.get_height():
+                self.speed_pos.remove(i)
 
+        print(self.usable)
         if len(self.usable) >= 1:
             if mouse_click[0]:
+                self.l_click = True
+            if self.l_click:
                 self.current_powerup = self.usable[0]
                 if self.current_powerup == "Heavy":
                     self.heavy()
                 if self.current_powerup == "Speed":
                     self.speedy_boy(dt)
-                else:
-                    self.current_powerup = None
         if len(self.usable) == 2:
             if mouse_click[2]:
+                self.r_click = True
+            if self.r_click:
                 self.current_powerup = self.usable[1]
                 if self.current_powerup == "Heavy":
                     self.heavy()
                 if self.current_powerup == "Speed":
                     self.speedy_boy(dt)
-                else:
-                    self.current_powerup = None
-        print(self.current_powerup)
+
+        if self.current_powerup == None:
+            self.r_click = False
+            self.l_click = False
 
     def heavy(self):
         if self.position[0] <= 0:
@@ -227,11 +246,13 @@ class Ball:
         print(self.bounce)
 
     def speedy_boy(self, dt):
-        if self.time >= 2:
-            self.usable.pop(0)
-            self.speed = 250
-            self.time = 0
-            self.current_powerup = None
-        else:
+        if self.time <= 2:
             self.speed = 500
             self.time += dt
+
+        if self.time > 2:
+
+            self.speed = 250
+            self.time = 0
+            self.usable.pop(0)
+            self.current_powerup = None
