@@ -184,10 +184,10 @@ class Map:
                 for col_num in range(start_tile_x, end_tile_x + 1):
                     code = row[col_num]
                     if code != 0:
-						if code == 6 or code == 7:
-							self.bricks.append(bricks.Brick([x,y],(8, 8),code, toughscore = 2))
+                        if code == 6 or code == 7:
+                            self.bricks.append(bricks.Brick([x,y],(8, 8),code, toughscore = 2))
                         else:
-						    self.bricks.append(bricks.Brick([x,y],(8, 8),code))
+                            self.bricks.append(bricks.Brick([x,y],(8, 8),code))
                     x += self.tile_width
                 y += self.tile_height
 

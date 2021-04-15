@@ -42,7 +42,6 @@ class Ball:
         self.brick_pos = None
         self.point = 0
         self.power_pos = []
-        self.power_on = False
 
 
     def draw(self):
@@ -192,25 +191,24 @@ class Ball:
                 self.power_pos.remove(i)
 
         if len(self.usable) >= 1:
-            if mouse_click[0] and not self.power_on:
-                if self.usable[0] == "Heavy":
-                    self.current_powerup = "Heavy"
+            if mouse_click[0]:
+                self.current_powerup = self.usable[0]
+                if self.current_powerup == "Heavy":
                     self.heavy()
-                elif self.usable[0] == "Speed":
-                    self.current_powerup = "Speed"
+                if self.current_powerup == "Speed":
                     self.speedy_boy(dt)
-            if len(self.usable) == 2 and not self.power_on:
-                if mouse_click[2]:
-                    if self.usable[1] == "Heavy":
-                        self.current_powerup = "Heavy"
-                        self.heavy()
-                    elif self.usable[1] == "Speed":
-                        self.current_powerup = "Speed"
-                        self.speedy_boy(dt)
-        else:
-            self.current_powerup = None
-            self.power_on = False
-        print(self.usable)
+                else:
+                    self.current_powerup = None
+        if len(self.usable) == 2:
+            if mouse_click[2]:
+                self.current_powerup = self.usable[1]
+                if self.current_powerup == "Heavy":
+                    self.heavy()
+                if self.current_powerup == "Speed":
+                    self.speedy_boy(dt)
+                else:
+                    self.current_powerup = None
+        print(self.current_powerup)
 
     def heavy(self):
         if self.position[0] <= 0:
@@ -221,20 +219,19 @@ class Ball:
             self.bounce = self.bounce + 1
         if self.position[1] + 10 >= self.win.get_height():
             self.current_powerup = None
-            self.power_on = True
             self.usable.pop(0)
         if self.bounce >= 2:
             self.current_powerup = None
-            self.power_on = True
             self.usable.pop(0)
             self.bounce = 0
+        print(self.bounce)
 
     def speedy_boy(self, dt):
         if self.time >= 2:
             self.usable.pop(0)
             self.speed = 250
             self.time = 0
+            self.current_powerup = None
         else:
             self.speed = 500
             self.time += dt
-            self.current_powerup = None

@@ -18,7 +18,7 @@ attk_timer = 2
 attk_type = 0
 clock = pygame.time.Clock()
 game_ui = gameui.GameUI(win)
-ball = ball.Ball(400, 400, win)
+ball = ball.Ball(0, 0, win)
 paddle = paddle.Paddle(win, 400, 700, ball)
 cur_map = game_map.Map("BossMaps\\Litch.tmx")
 background = pygame.image.load("images\\Background.png")
@@ -35,18 +35,19 @@ while not done:
     mClick = pygame.mouse.get_pressed()
     health = len(cur_map.bricks)
 
-    # Movement
-    paddle.point_towards(mPos, keys, dt)
-    paddle.handle_input(dt, keys, event)
-    # ball.shadow(dt, paddle.position)
+    if mode == "game":
+        # Movement
+        paddle.point_towards(mPos, keys, dt)
+        paddle.handle_input(dt, keys, event)
+        # ball.shadow(dt, paddle.position)
 
-    # Collision
-    paddle.collision(collide_list, paddle.dashing)
-    # paddle.pixel_collision(cur_map.bricks, ball.shadow_ball_pos[0], ball.shadow_ball_pos[1], 5, ball.shadow_dir)
+        # Collision
+        paddle.collision(collide_list, paddle.dashing)
+        # paddle.pixel_collision(cur_map.bricks, ball.shadow_ball_pos[0], ball.shadow_ball_pos[1], 5, ball.shadow_dir)
 
-    paddle.pixel_collision(cur_map.bricks, ball.position[0], ball.position[1], 5, ball.direction)
+        paddle.pixel_collision(cur_map.bricks, ball.position[0], ball.position[1], 5, ball.direction)
 
-    paddle.collide()
+        paddle.collide()
 
 
 
@@ -112,30 +113,30 @@ while not done:
                         attk_exists = False
                         attk_timer = 2
 
-        # quit game
-        if game_ui.button_quit_collider.collidepoint(mPos) and mClick[0]:
-            mode = "quit"
-        if mode == "quit":
-            done = True
-        # credits
-        if game_ui.button_credits_collider.collidepoint(mPos) and mClick[0]:
-            mode = "credits"
-        if mode == "credits":
-            win.fill((0, 0, 0))
-            win.blit(game_ui.credits_scr, (0, 0))
-            game_ui.draw_return()
-            game_ui.draw_return_hov()
-        # leaderboard
-        if game_ui.button_leaderboard_collider.collidepoint(mPos) and mClick[0]:
-            mode = "leaderboard"
-        if mode == "leaderboard":
-            win.fill((0, 0, 0))
-            win.blit(game_ui.leaderboard_scr, (0, 0))
-            game_ui.draw_return()
-            game_ui.draw_return_hov()
-        # return to title screen / main menu
-        if game_ui.button_back_collider.collidepoint(mPos) and mClick[0]:
-            mode = "title"
+    # quit game
+    if game_ui.button_quit_collider.collidepoint(mPos) and mClick[0]:
+        mode = "quit"
+    if mode == "quit":
+        done = True
+    # credits
+    if game_ui.button_credits_collider.collidepoint(mPos) and mClick[0]:
+        mode = "credits"
+    if mode == "credits":
+        win.fill((0, 0, 0))
+        win.blit(game_ui.credits_scr, (0, 0))
+        game_ui.draw_return()
+        game_ui.draw_return_hov()
+    # leaderboard
+    if game_ui.button_leaderboard_collider.collidepoint(mPos) and mClick[0]:
+        mode = "leaderboard"
+    if mode == "leaderboard":
+        win.fill((0, 0, 0))
+        win.blit(game_ui.leaderboard_scr, (0, 0))
+        game_ui.draw_return()
+        game_ui.draw_return_hov()
+    # return to title screen / main menu
+    if game_ui.button_back_collider.collidepoint(mPos) and mClick[0]:
+        mode = "title"
 
 
 
@@ -150,7 +151,6 @@ while not done:
 
 
     pygame.display.flip()
-
 
     # Exiting
     if event.type == pygame.KEYDOWN:
