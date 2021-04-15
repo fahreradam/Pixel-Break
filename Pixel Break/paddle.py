@@ -115,19 +115,31 @@ class Paddle:
                     if ball_x < p.right_point[0] and ball_x < p.top_point[0] and ball_x < p.bottom_point[0] and ball_x >= \
                             p.left_point[0]:
                         direction[0] = direction[0] * -1  # LEFT
-                        pixel_list.remove(p)
+                        if p.toughness != 0:
+                            p.toughness -= 1
+                        else:
+                            pixel_list.remove(p)
                     elif ball_x > p.left_point[0] and ball_x > p.top_point[0] and ball_x > p.bottom_point[0] and ball_x <= \
                             p.right_point[0]:
                         direction[0] = direction[0] * -1  # RIGHT
-                        pixel_list.remove(p)
+                        if p.toughness != 0:
+                            p.toughness -= 1
+                        else:
+                            pixel_list.remove(p)
                     elif ball_y > p.left_point[1] and ball_y > p.top_point[1] and ball_y > p.right_point[1] and ball_y <= \
                             p.bottom_point[1]:
                         direction[1] = direction[1] * -1  # BOTTOM
-                        pixel_list.remove(p)
+                        if p.toughness != 0:
+                            p.toughness -= 1
+                        else:
+                            pixel_list.remove(p)
                     elif ball_y < p.left_point[1] and ball_y < p.top_point[1] and ball_y < p.right_point[1] and ball_y >= \
                             p.bottom_point[1]:
                         direction[1] = direction[1] * -1  # TOP
-                        pixel_list.remove(p)
+                        if p.toughness != 0:
+                            p.toughness -= 1
+                        else:
+                            pixel_list.remove(p)
                 if p.powerup is not None:
                     # self.ball.brick_pos = p.pos
                     self.ball.powerup = p.powerup

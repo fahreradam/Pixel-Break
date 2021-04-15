@@ -205,7 +205,6 @@ class Ball:
             elif i[1] >= self.win.get_height():
                 self.speed_pos.remove(i)
 
-        print(self.usable)
         if len(self.usable) >= 1:
             if mouse_click[0]:
                 self.l_click = True
@@ -243,7 +242,7 @@ class Ball:
             self.current_powerup = None
             self.usable.pop(0)
             self.bounce = 0
-        print(self.bounce)
+
 
     def speedy_boy(self, dt):
         if self.time <= 2:

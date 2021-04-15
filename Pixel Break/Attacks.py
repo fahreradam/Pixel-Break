@@ -5,6 +5,10 @@ import random
 class Attacks:
 
     def __init__(self, direction, paddle_height, paddle_width, screen_w, screen_h, paddle_x, collide_list, paddle_y, other_x=0, attack2=False, attack3=False):
+        self.thing = True
+        self.color = 255, 0, 255
+        self.timer = 2
+        self.timer2 = 0
         self.rebound = False
         self.rebound2 = False
         self.still_homing = True
@@ -161,6 +165,8 @@ class Attacks:
 
     def update(self, dt, win):
 
+        self.dt = dt
+
         if self.direction == 1:
 
             if self.wide < 30:
@@ -244,7 +250,7 @@ class Attacks:
         if self.attack2 != None:
 
             self.attack2.update(dt, win)
-            self.attack2.draw(win)
+            self.attack2.draw(win, dt)
 
 
 
@@ -258,7 +264,7 @@ class Attacks:
         if self.attack3 != None:
 
             self.attack3.update(dt, win)
-            self.attack3.draw(win)
+            self.attack3.draw(win, dt)
 
         if self.direction == 77:
             if self.d7 <= 0:
@@ -279,7 +285,8 @@ class Attacks:
             self.rebound2 = False
             self.rebound = False
             self.speed = 400
-
+            self.timer = 2
+            self.timer2 = 0
 
 
 
@@ -327,7 +334,7 @@ class Attacks:
                     self.rebound2 = True
                     self.rebound = False
             elif self.x <= 10 and self.rebound2:
-                print("TRUE")
+
                 self.direction = 0
 
         if self.direction == 10:
@@ -344,12 +351,21 @@ class Attacks:
                 self.rebound2 = True
                 self.rebound = False
             elif self.x >= self.screen_w - 30 and self.rebound2:
-                print("TRUE")
+
                 self.direction = 0
 
-    def draw(self, win):
-
-        self.rect = pygame.draw.rect(win, (150, 0, 255), (self.x, self.y, int(self.wide), int(self.high)))
+    def draw(self, win, dt):
+        if self.direction == 1 or self.direction == 2 or self.direction == 3 or self.direction == 4 or self.direction == 7 or self.direction == 77:
+            self.color = 150, 0, 255
+        elif self.direction == 5:
+            self.color = 255, 0, 150
+        elif self.direction == 6:
+            self.color = 0, 150, 255
+        elif self.direction == 8:
+            self.color = 150, 150, 0
+        elif self.direction == 9 or self.direction == 10:
+            self.color = 255, 255, 255
+        self.rect = pygame.draw.rect(win, (self.color), (self.x, self.y, int(self.wide), int(self.high)))
 
 
 

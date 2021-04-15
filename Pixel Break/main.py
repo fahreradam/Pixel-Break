@@ -100,7 +100,7 @@ while not done:
 
             if left_attk.direction != 0:
 
-                left_attk.draw(win)
+                left_attk.draw(win, dt)
             else:
                 if len(collide_list) >= 1 and left_attk.attack2 == None:
                     collide_list.remove(left_attk)
