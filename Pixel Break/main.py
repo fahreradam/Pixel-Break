@@ -65,8 +65,7 @@ while not done:
         attk_type = 0
         if attk_timer <= 0:
 
-            attk_type = 6
-
+            attk_type = random.randint(0, 10)
 
             left_attk = Attacks.Attacks(attk_type, paddle.position[1], paddle.actual_stamina.get_width(),
                                         600, 800, paddle.position[0], collide_list, paddle.position[1])
@@ -83,12 +82,16 @@ while not done:
 
             left_attk.draw(win)
         else:
-            if len(collide_list) >= 1 and left_attk.attack2 == None and left_attk.attack3 == None:
+            if len(collide_list) >= 1 and left_attk.attack2 == None:
                 collide_list.remove(left_attk)
                 attk_exists = False
                 attk_timer = 2
             if left_attk.attack3 != None:
-                collide_list.remove(left_attk.attack3)
+                if left_attk.attack3.direction == 0:
+                    collide_list.remove(left_attk.attack3)
+
+                    attk_exists = False
+                    attk_timer = 2
             if left_attk.attack2 != None:
                 if left_attk.attack2.direction == 0:
                     collide_list.remove(left_attk.attack2)
@@ -120,3 +123,8 @@ while not done:
             done = True
     if event.type == pygame.QUIT:
         done = True
+
+
+
+
+
