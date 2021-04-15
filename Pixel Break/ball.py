@@ -11,6 +11,7 @@ class Ball:
         self.shadow_ball = pygame.image.load("images\\shadow ball.png")
         self.speed_img = pygame.image.load("images\\speed_power_up.png")
         self.heavy_img = pygame.image.load("images\\heavy_power_up.png")
+        self.frame = pygame.image.load("images\\Power_up_frame.png")
         self.img_scale = pygame.transform.scale(self.img, (10, 10))
         self.speed = 250
         self.radius = 5
@@ -180,7 +181,6 @@ class Ball:
                                               self.game_win_img.get_width() / 2, self.win.get_height() - 700))
 
     def power(self, dt, paddle_pos, stamina, mouse_click):
-        print(self.usable)
         for p in self.av_pos:
             if pygame.Rect(p.pos[0], p.pos[1], 10, 10).colliderect(
                     pygame.Rect(paddle_pos[0] - (stamina / 2), paddle_pos[1] - 5, stamina, 10)):

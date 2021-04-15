@@ -15,7 +15,7 @@ class Brick:
         self.code = code
         self.powerup = None
         self.toughness = toughscore
-        if random.randint(0, 50) == 50:
+        if random.randint(0, 100) == 100:
             if random.randint(0, 1) == 0:
                 self.powerup = "Heavy"
             elif random.randint(0, 1) == 1:

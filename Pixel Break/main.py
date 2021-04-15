@@ -13,7 +13,7 @@ win_h = 800
 win = pygame.display.set_mode((win_w, win_h))
 bachground = pygame.Surface((win_w, win_h))
 boss_screen = pygame.Surface((win_w, win_h))
-font = pygame.font.Font("font\\pixle_font\\Pixle_Font.ttf", 32)
+font = pygame.font.Font("font\\pixle_font\\Pixle_Font.ttf", 24)
 attk_exists = False
 attk_timer = 2
 attk_type = 0
@@ -71,7 +71,7 @@ while not done:
         text = font.render(("Score: " + str(paddle.score)), True, (255, 255, 255))
         win.fill((0, 0, 0))
         win.blit(bachground, (0, 0))
-        win.blit(text, (0, 700))
+        win.blit(text, (0, 770))
         bachground.blit(background, (0, 0))
         game_ui.draw_return()
         game_ui.draw_return_hov()
