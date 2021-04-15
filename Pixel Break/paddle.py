@@ -90,7 +90,8 @@ class Paddle:
             elif object.is_attack and dashing == False:
 
                 if stamina_bar.colliderect(object.rect):
-                    self.stamina -= sfactor
+                    if self.stamina >= 1:
+                        self.stamina -= sfactor
 
     def pixel_collision(self, pixel_list, ball_x, ball_y, ball_width, direction):
 

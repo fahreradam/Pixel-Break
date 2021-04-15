@@ -278,7 +278,7 @@ class Attacks:
             self.was_5 = False
             self.rebound2 = False
             self.rebound = False
-            self.speed = 500
+            self.speed = 400
 
 
 
@@ -320,7 +320,7 @@ class Attacks:
             elif self.x < self.screen_w / 2 and self.rebound == False and self.rebound2 == False:
                 self.x += self.speed * dt
             if self.rebound or self.rebound2:
-                self.speed = 750
+                self.speed = 510
                 self.x -= self.speed * dt
             if self.x <= 0 and self.rebound:
                     self.x = self.screen_w - 30
@@ -337,7 +337,7 @@ class Attacks:
             elif self.x > self.screen_w / 2 and self.rebound == False and self.rebound2 == False:
                 self.x -= self.speed * dt
             if self.rebound or self.rebound2:
-                self.speed = 750
+                self.speed = 510
                 self.x += self.speed * dt
             if self.x >= self.screen_w - 10 and self.rebound:
                 self.x = 1
