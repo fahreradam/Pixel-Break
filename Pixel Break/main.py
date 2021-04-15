@@ -56,6 +56,53 @@ while not done:
 
 
     # Drawing
+
+    win.blit(bachground, (0, 0))
+    bachground.blit(background, (0, 0))
+    paddle.draw()
+    ball.draw()
+    ball.move(dt)
+    ball.collision(paddle.position, mPos, paddle.stamina)
+    cur_map.render(win, grid_color=None)
+    ball.power(dt)
+    if attk_exists == False:
+
+        attk_timer -= 1 * dt
+        attk_type = 0
+        if attk_timer <= 0:
+
+            attk_type = random.randint(0, 10)
+
+            left_attk = Attacks.Attacks(attk_type, paddle.position[1], paddle.actual_stamina.get_width(),
+                                        600, 800, paddle.position[0], collide_list, paddle.position[1])
+
+            collide_list.append(left_attk)
+
+            attk_exists = True
+
+    if attk_exists == True:
+
+        left_attk.update(dt, win)
+
+        if left_attk.direction != 0:
+
+            left_attk.draw(win)
+        else:
+            if len(collide_list) >= 1 and left_attk.attack2 == None:
+                collide_list.remove(left_attk)
+                attk_exists = False
+                attk_timer = 2
+            if left_attk.attack3 != None:
+                if left_attk.attack3.direction == 0:
+                    collide_list.remove(left_attk.attack3)
+
+                    attk_exists = False
+                    attk_timer = 2
+            if left_attk.attack2 != None:
+                if left_attk.attack2.direction == 0:
+                    collide_list.remove(left_attk.attack2)
+
+
     # title screen --
     if mode == "title":
         game_ui.draw()
@@ -102,6 +149,7 @@ while not done:
             else:
                 if len(collide_list) >= 1 and left_attk.attack2 == None and left_attk.attack3 == None:
                     collide_list.remove(left_attk)
+
                     attk_exists = False
                     attk_timer = 2
                 if left_attk.attack3 != None:
@@ -158,3 +206,8 @@ while not done:
             done = True
     if event.type == pygame.QUIT:
         done = True
+
+
+
+
+
