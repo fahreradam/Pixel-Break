@@ -1,6 +1,7 @@
 import pygame
 import math
-
+import copy
+import power_ups
 
 class Paddle:
     def __init__(self, win, x, y, ball):
@@ -15,6 +16,8 @@ class Paddle:
         self.collide_type = 0
         self.dashing = False
         self.ball = ball
+        self.score = 0
+        self.av_power = []
 
     def draw(self):
         final_surf = pygame.transform.scale(self.actual_stamina, (int(self.stamina), 10))
@@ -26,6 +29,8 @@ class Paddle:
                                   self.position[1] - temp_surf.get_height() / 2))
         self.win.blit(frame, (self.position[0] - frame.get_width() / 2,
                               self.position[1] - frame.get_height() / 2))
+        for p in self.av_power:
+            p.draw()
 
     def move(self, direction, dt):
         dist = self.speed * direction * dt
@@ -34,6 +39,8 @@ class Paddle:
         adjacent = dist * math.cos(radians)
         self.position[0] += adjacent
         self.position[1] += opposite
+
+
 
     def collide(self):
         if self.position[0] - 50 <= 0:
@@ -62,6 +69,8 @@ class Paddle:
                 self.dashing = False
         if self.stamina <= 100:
             self.stamina += 5 * dt
+        for p in self.av_power:
+            p.move(dt)
 
     def point_towards(self, target_pt, keys, dt):
         if keys[pygame.K_SPACE]:
@@ -141,15 +150,9 @@ class Paddle:
                         else:
                             pixel_list.remove(p)
                 if p.powerup is not None:
-                    # self.ball.brick_pos = p.pos
-                    self.ball.powerup = p.powerup
-                    self.ball.point += 5
-                else:
-                    p.powerup = None
-                if p.powerup == "Heavy":
-                    self.ball.heavy_pos.append(p.pos[:])
-                if p.powerup == "Speed":
-                    self.ball.speed_pos.append(p.pos[:])
+                    self.av_power.append(power_ups.Power_ups(copy.deepcopy(p.pos), p.powerup, self.win))
+                self.ball.av_pos = self.av_power
+                self.score += 5
 
 
     def distance(self, x1, y1, x2, y2):
