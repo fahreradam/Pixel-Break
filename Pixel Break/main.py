@@ -36,6 +36,30 @@ while not done:
     mClick = pygame.mouse.get_pressed()
     health = len(cur_map.bricks)
 
+    # Drawing
+    # Modes and UI ------------------------------------------------------------------------
+    # return to title screen / main menu
+    if game_ui.button_back_collider.collidepoint(mPos) and mClick[0]:
+        mode = "title"
+    # Modes --
+    # title
+    if mode == "title":
+        game_ui.draw()
+        game_ui.draw_hovered()
+        # menu buttons --
+        # start game
+        if game_ui.button_start_collider.collidepoint(mPos) and mClick[0]:
+            mode = "game"
+        # quit game
+        elif game_ui.button_quit_collider.collidepoint(mPos) and mClick[0]:
+            mode = "quit"
+        # credits
+        elif game_ui.button_credits_collider.collidepoint(mPos) and mClick[0]:
+            mode = "credits"
+        # leaderboard
+        elif game_ui.button_leaderboard_collider.collidepoint(mPos) and mClick[0]:
+            mode = "leaderboard"
+    # game
     if mode == "game":
         # Movement
         paddle.point_towards(mPos, keys, dt)
@@ -50,24 +74,6 @@ while not done:
 
         paddle.collide()
 
-
-
-
-
-
-
-
-
-
-    # title screen --
-    if mode == "title":
-        game_ui.draw()
-        game_ui.draw_hovered()
-    # menu buttons and game modes
-    # start game
-    if game_ui.button_start_collider.collidepoint(mPos) and mClick[0]:
-        mode = "game"
-    if mode == "game":
         text = font.render(("Score: " + str(paddle.score)), True, (255, 255, 255))
         win.fill((0, 0, 0))
         win.blit(bachground, (0, 0))
@@ -125,43 +131,24 @@ while not done:
                         attk_exists = False
                         attk_timer = 2
 
-    # quit game
-    if game_ui.button_quit_collider.collidepoint(mPos) and mClick[0]:
-        mode = "quit"
-    if mode == "quit":
+        ball.game_win(health)
+        ball.game_over()
+    # exit
+    elif mode == "quit":
         done = True
     # credits
-    if game_ui.button_credits_collider.collidepoint(mPos) and mClick[0]:
-        mode = "credits"
-    if mode == "credits":
+    elif mode == "credits":
         win.fill((0, 0, 0))
         win.blit(game_ui.credits_scr, (0, 0))
         game_ui.draw_return()
         game_ui.draw_return_hov()
     # leaderboard
-    if game_ui.button_leaderboard_collider.collidepoint(mPos) and mClick[0]:
-        mode = "leaderboard"
-    if mode == "leaderboard":
+    elif mode == "leaderboard":
         win.fill((0, 0, 0))
         win.blit(game_ui.leaderboard_scr, (0, 0))
         game_ui.draw_return()
         game_ui.draw_return_hov()
-    # return to title screen / main menu
-    if game_ui.button_back_collider.collidepoint(mPos) and mClick[0]:
-        mode = "title"
-
-
-
-
-
-
-
-    ball.game_win(health)
-
-    ball.game_over()
-
-
-
+    # --------------------------------------------------------------------------------------
     pygame.display.flip()
 
     # Exiting
