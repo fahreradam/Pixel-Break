@@ -86,9 +86,12 @@ while not done:
             attk_timer -= 1 * dt
             attk_type = 0
             if attk_timer <= 0:
-
-                attk_type = random.randint(1, 10)
-
+                a = random.randint(1, 5)
+                b = random.randint(1, 5)
+                if health <= (health / 2):
+                    attk_type = random.randint(1, 10)
+                else:
+                    attk_type = a + b
 
                 left_attk = Attacks.Attacks(attk_type, paddle.position[1], paddle.actual_stamina.get_width(),
                                             600, 800, paddle.position[0], collide_list, paddle.position[1])

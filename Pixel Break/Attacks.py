@@ -41,18 +41,18 @@ class Attacks:
         if other_x != 0:
             self.x = self.ox
 
-        if self.direction == 1:
+        if self.direction == 5:
 
             self.x = 1
             self.y = paddle_height - 100
             self.high = 200
 
-        if self.direction == 2:
+        if self.direction == 6:
             self.x = screen_w
             self.y = paddle_height - 100
             self.high = 200
 
-        if self.direction == 3:
+        if self.direction == 7:
             self.y = screen_h
             self.wide = 30
             lr = random.randint(1, 2)
@@ -77,7 +77,7 @@ class Attacks:
                 if self.x - 30 >= self.screen_w:
                     self.x = self.screen_w - 30
 
-        if self.direction == 5:
+        if self.direction == 8:
             self.y = 1
             self.wide = 30
             if not attack2:
@@ -93,7 +93,7 @@ class Attacks:
             if attack2:
                 self.x = other_x
 
-        if self.direction == 6:
+        if self.direction == 9:
             self.y = 1
             self.wide = 30
 
@@ -112,33 +112,33 @@ class Attacks:
                     self.x = self.screen_w - 30
                 if self.ox - 30 >= self.screen_w:
                     self.x = self.screen_w - 30
-            self.attack2 = Attacks(5, paddle_height, paddle_width, screen_w, screen_h, paddle_x, collide_list, paddle_y, self.ox, True)
+            self.attack2 = Attacks(8, paddle_height, paddle_width, screen_w, screen_h, paddle_x, collide_list, paddle_y, self.ox, True)
             collide_list.append(self.attack2)
         else:
             self.attack2 = None
 
 
 
-        if self.direction == 7:
+        if self.direction == 3:
 
             self.wide = 30
             self.high = 200
             self.y = self.screen_h - self.high
             self.x = ((self.screen_w / 2) - 150) - 30
-            self.attack3 = Attacks(77, paddle_height, paddle_width, screen_w, screen_h, paddle_x, collide_list, paddle_y, 0, False, True)
+            self.attack3 = Attacks(33, paddle_height, paddle_width, screen_w, screen_h, paddle_x, collide_list, paddle_y, 0, False, True)
             collide_list.append(self.attack3)
         else:
 
             self.attack3 = None
 
-        if self.direction == 77:
+        if self.direction == 33:
 
             self.wide = 30
             self.high = 200
             self.y = self.screen_h - self.high
             self.x = (self.screen_w / 2) + 150
 
-        if self.direction == 8:
+        if self.direction == 2:
 
             self.wide = 75
             self.high = 75
@@ -150,7 +150,7 @@ class Attacks:
                 self.x = screen_w - 75
                 self.y = 0
 
-        if self.direction == 9:
+        if self.direction == 1:
             self.high = 200
             self.x = 1
             self.wide = 30
@@ -167,7 +167,7 @@ class Attacks:
 
         self.dt = dt
 
-        if self.direction == 1:
+        if self.direction == 5: #HORIZONTAL
 
             if self.wide < 30:
                 self.wide += self.speed * dt
@@ -179,7 +179,7 @@ class Attacks:
                 self.d5 -= 1 * dt
             if self.d5 <= 0:
                 self.direction = 0
-        if self.direction == 2:
+        if self.direction == 6: #HORIZONTAL
 
             if self.wide < 30:
                 self.wide += self.speed * dt
@@ -196,7 +196,7 @@ class Attacks:
 
 
 
-        if self.direction == 3:
+        if self.direction == 7: #UP
 
             if self.high < 200:
                 self.high += self.speed * dt
@@ -206,7 +206,7 @@ class Attacks:
             if self.y + self.high <= 0:
                 self.direction = 0
 
-        if self.direction == 4:
+        if self.direction == 4: #UP
 
             if self.high < 200:
                 self.high += self.speed * dt
@@ -215,7 +215,7 @@ class Attacks:
             if self.y >= self.screen_h:
                 self.direction = 0
 
-        if self.direction == 5:
+        if self.direction == 8: #L
             if self.high < 200:
                 self.high += self.speed * dt
 
@@ -226,26 +226,26 @@ class Attacks:
 
                     if self.x <= self.px:
                         self.was_5 = True
-                        self.direction = 1
+                        self.direction = 5
 
 
                     elif self.x >= self.px:
                         self.was_5 = True
-                        self.direction = 2
+                        self.direction = 6
             else:
                 if self.y >= self.ph - (self.high / 2):
 
-                    self.direction = 2
+                    self.direction = 6
 
 
-        if self.direction == 6:
+        if self.direction == 9: #SPLIT
             if self.high < 200:
                 self.high += self.speed * dt
 
             if self.high >= 200 and self.y < self.ph - (self.high / 2):
                 self.y += self.speed * dt
             if self.y >= self.ph - (self.high / 2):
-                self.direction = 1
+                self.direction = 5
 
         if self.attack2 != None:
 
@@ -255,7 +255,7 @@ class Attacks:
 
 
 
-        if self.direction == 7:
+        if self.direction == 3: #STAY
             if self.d7 <= 0:
                 self.direction = 0
             else:
@@ -266,7 +266,7 @@ class Attacks:
             self.attack3.update(dt, win)
             self.attack3.draw(win, dt)
 
-        if self.direction == 77:
+        if self.direction == 33: #STAY 2
             if self.d7 <= 0:
                 self.direction = 0
             else:
@@ -291,7 +291,7 @@ class Attacks:
 
 
 
-        if self.direction == 8:
+        if self.direction == 2: #HOMING
 
             d = self.distance(self.x, self.y, self.px, self.py)
             if d > 30:
@@ -320,7 +320,7 @@ class Attacks:
 
                     self.direction = 0
 
-        if self.direction == 9:
+        if self.direction == 1: #MEME
 
             if self.x >= self.screen_w / 2:
                 self.rebound = True
@@ -337,7 +337,7 @@ class Attacks:
 
                 self.direction = 0
 
-        if self.direction == 10:
+        if self.direction == 10: #MEME
 
             if self.x <= self.screen_w / 2:
                 self.rebound = True
@@ -355,15 +355,15 @@ class Attacks:
                 self.direction = 0
 
     def draw(self, win, dt):
-        if self.direction == 1 or self.direction == 2 or self.direction == 3 or self.direction == 4 or self.direction == 7 or self.direction == 77:
+        if self.direction == 5 or self.direction == 6 or self.direction == 7 or self.direction == 4 or self.direction == 3 or self.direction == 33:
             self.color = 150, 0, 255
-        elif self.direction == 5:
-            self.color = 255, 0, 150
-        elif self.direction == 6:
-            self.color = 0, 150, 255
         elif self.direction == 8:
-            self.color = 150, 150, 0
-        elif self.direction == 9 or self.direction == 10:
+            self.color = 255, 0, 150
+        elif self.direction == 9:
+            self.color = 0, 150, 255
+        elif self.direction == 2:
+            self.color = 200, 150, 0
+        elif self.direction == 1 or self.direction == 10:
             self.color = 255, 255, 255
         self.rect = pygame.draw.rect(win, (self.color), (self.x, self.y, int(self.wide), int(self.high)))
 
