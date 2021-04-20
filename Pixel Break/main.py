@@ -46,6 +46,11 @@ while not done:
     if mode == "title":
         game_ui.draw()
         game_ui.draw_hovered()
+        # ball positive, movement resets/freezes
+        ball.position = paddle.position
+        ball.move(0)
+        # lives counter resets
+        # ball.life_lost = 0
         # menu buttons --
         # start game
         if game_ui.button_start_collider.collidepoint(mPos) and mClick[0]:

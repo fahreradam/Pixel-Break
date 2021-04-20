@@ -16,7 +16,6 @@ class Ball:
         self.speed = 250
         self.radius = 5
         self.is_attack = False
-
         # player life --
         # image
         self.life_img = pygame.image.load("images\\player life.png").convert()
