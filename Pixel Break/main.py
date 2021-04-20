@@ -111,7 +111,14 @@ while not done:
 
                 attk_exists = True
 
+
         if attk_exists == True:
+            if attk_type == 5 or attk_type == 6 or attk_type == 7 or attk_type == 4 or attk_type:
+                attk_timer = 1
+            elif attk_type == 3 or attk_type == 8:
+                attk_timer = 1.5
+            elif attk_type == 2 or attk_type == 9:
+                attk_timer = 2
 
             left_attk.update(dt, win)
 
@@ -123,7 +130,7 @@ while not done:
                     collide_list.remove(left_attk)
 
                     attk_exists = False
-                    attk_timer = 2
+
                 if left_attk.attack3 != None:
                     if left_attk.attack3.direction == 0:
                         if collide_list.count(left_attk.attack3) == 1:
@@ -134,7 +141,7 @@ while not done:
                             collide_list.remove(left_attk.attack2)
 
                         attk_exists = False
-                        attk_timer = 2
+
 
         ball.game_win(health)
         ball.game_over()

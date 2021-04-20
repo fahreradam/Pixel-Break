@@ -84,7 +84,7 @@ class Paddle:
 
     def collision(self, collide_list, dashing=False):
 
-        sfactor = 0.65
+        sfactor = 0.8
         stamina_bar = pygame.Rect((self.position[0] - (self.stamina / 2), self.position[1], self.stamina, 10))
 
         for object in collide_list:
