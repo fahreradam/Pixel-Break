@@ -46,8 +46,13 @@ music_dict = {
 
 
 # EXAMPLE OF HOW TO PLAY SOUNDS FROM THE DICTS. - LANE
-music_dict["MainMenu"].set_volume(0.4)
-music_dict["MainMenu"].play()
+pygame.mixer.music.load("Sounds\\MainMenu.ogg")  # loads up the main menu music
+pygame.mixer.music.set_volume(0.4)  # sets volume of current track to 40%
+pygame.mixer.music.play(-1)     # the -1 this tells it to loop
+pygame.mixer.music.fadeout(2000)  # setting the fade to happen over 200ms and this will fade out the current track playing
+# to play the next track of music
+pygame.mixer.music.load("Sounds\\BossFight.mp3")  # this queues up the boss fight track for when we switch menus
+pygame.mixer.music.play(-1)     # the -1 this tells it to loop
 
 
 # game state/mode
