@@ -5,7 +5,9 @@ import ball
 import game_map
 import Attacks
 import random
+import Leaderboard
 import bricks
+
 pygame.init()
 
 win_w = 600
@@ -17,9 +19,11 @@ font = pygame.font.Font("font\\pixle_font\\Pixle_Font.ttf", 24)
 attk_exists = False
 attk_timer = 2
 attk_type = 0
+mode = "title"
+leaderboard = Leaderboard.Leaderboard()
 clock = pygame.time.Clock()
 game_ui = gameui.GameUI(win)
-ball = ball.Ball(0, 0, win)
+ball = ball.Ball(0, 0, win, leaderboard)
 paddle = paddle.Paddle(win, 400, 700, ball)
 cur_map = game_map.Map("BossMaps\\Litch.tmx")
 background = pygame.image.load("images\\Background.png")
@@ -27,7 +31,6 @@ done = False
 collide_list = [ball]
 left_attk = None
 # game state/mode
-mode = "title"
 while not done:
     dt = clock.tick() / 1000
     event = pygame.event.poll()
@@ -35,6 +38,7 @@ while not done:
     mPos = pygame.mouse.get_pos()
     mClick = pygame.mouse.get_pressed()
     health = len(cur_map.bricks)
+    leaderboard.draw(win)
 
     # Drawing
     # Modes and UI ------------------------------------------------------------------------
@@ -72,11 +76,10 @@ while not done:
         # ball.shadow(dt, paddle.position)
 
         # Collision
-        paddle.collision(collide_list, paddle.dashing)
+        paddle.collision(collide_list)
         # paddle.pixel_collision(cur_map.bricks, ball.shadow_ball_pos[0], ball.shadow_ball_pos[1], 5, ball.shadow_dir)
 
         paddle.pixel_collision(cur_map.bricks, ball.position[0], ball.position[1], 5, ball.direction)
-
         paddle.collide()
 
         text = font.render(("Score: " + str(paddle.score)), True, (255, 255, 255))
@@ -111,7 +114,6 @@ while not done:
 
                 attk_exists = True
 
-
         if attk_exists == True:
             if attk_type == 5 or attk_type == 6 or attk_type == 7 or attk_type == 4 or attk_type:
                 attk_timer = 1
@@ -142,9 +144,17 @@ while not done:
 
                         attk_exists = False
 
+    if health <= 0 or ball.life_lost >= ball.life_all and leaderboard.typing == True:
+        mode = "end"
 
+    if mode == "end":
         ball.game_win(health)
         ball.game_over()
+    if mode == "end":
+        leaderboard.update(ball.score, win, mode)
+        if leaderboard.typing == False:
+            mode = "title"
+
     # exit
     elif mode == "quit":
         done = True
@@ -158,6 +168,7 @@ while not done:
     elif mode == "leaderboard":
         win.fill((0, 0, 0))
         win.blit(game_ui.leaderboard_scr, (0, 0))
+        leaderboard.draw(win)
         game_ui.draw_return()
         game_ui.draw_return_hov()
     # --------------------------------------------------------------------------------------
@@ -169,8 +180,3 @@ while not done:
             done = True
     if event.type == pygame.QUIT:
         done = True
-
-
-
-
-

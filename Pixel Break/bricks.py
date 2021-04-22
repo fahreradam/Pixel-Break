@@ -16,9 +16,10 @@ class Brick:
         self.powerup = None
         self.toughness = toughscore
         if random.randint(0, 100) == 100:
-            if random.randint(0, 1) == 0:
+            ran = random.randint(0, 1)
+            if ran == 0:
                 self.powerup = "Heavy"
-            elif random.randint(0, 1) == 1:
+            elif ran == 1:
                 self.powerup = "Speed"
 
     def get_rect(self):

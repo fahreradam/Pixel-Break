@@ -1,0 +1,270 @@
+Index: Pixel Break/paddle.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pygame\r\nimport math\r\nimport copy\r\nimport power_ups\r\n\r\nclass Paddle:\r\n    def __init__(self, win, x, y, ball):\r\n        self.win = win\r\n        self.speed = 200\r\n        self.stamina = 100\r\n        self.position = [x, y]\r\n        self.orientation = 0  # In degrees\r\n        self.actual_stamina = pygame.image.load(\"images\\\\stamina bar.png\")\r\n        self.full_stamina = pygame.image.load(\"images\\\\stamina bar back.png\")\r\n        self.radius = self.actual_stamina.get_width() / 2\r\n        self.collide_type = 0\r\n        self.dashing = False\r\n        self.ball = ball\r\n        self.score = 0\r\n        self.av_power = []\r\n\r\n    def draw(self):\r\n        final_surf = pygame.transform.scale(self.actual_stamina, (int(self.stamina), 10))\r\n        full_stamina = pygame.transform.scale(self.full_stamina, (100, 10))\r\n        temp_surf = pygame.transform.rotate(final_surf, self.orientation)\r\n        frame = pygame.transform.rotate(full_stamina, self.orientation)\r\n\r\n        self.win.blit(temp_surf, (self.position[0] - temp_surf.get_width() / 2,\r\n                                  self.position[1] - temp_surf.get_height() / 2))\r\n        self.win.blit(frame, (self.position[0] - frame.get_width() / 2,\r\n                              self.position[1] - frame.get_height() / 2))\r\n        for p in self.av_power:\r\n            p.draw()\r\n\r\n    def move(self, direction, dt):\r\n        dist = self.speed * direction * dt\r\n        radians = math.radians(self.orientation)\r\n        opposite = -dist * math.sin(radians)\r\n        adjacent = dist * math.cos(radians)\r\n        self.position[0] += adjacent\r\n        self.position[1] += opposite\r\n\r\n\r\n\r\n    def collide(self):\r\n        if self.position[0] - 50 <= 0:\r\n            self.position[0] = 50\r\n        if self.position[0] + 50 >= self.win.get_width():\r\n            self.position[0] = self.win.get_width() - 50\r\n\r\n    def handle_input(self, dt, keys, event):\r\n        if keys[pygame.K_d]:\r\n            # self.move(1, dt)\r\n            self.position[0] += self.speed * dt\r\n\r\n            if event.type == pygame.KEYDOWN:\r\n                if event.key == pygame.K_LSHIFT and self.stamina >= 10:\r\n                    self.position[0] = 100 + self.position[0]\r\n                    self.stamina -= 10\r\n        if keys[pygame.K_a]:\r\n            # self.move(-1, dt)\r\n            self.position[0] -= self.speed * dt\r\n            if event.type == pygame.KEYDOWN:\r\n                if event.key == pygame.K_LSHIFT and self.stamina >= 10:\r\n                    self.position[0] = self.position[0] - 100\r\n                    self.stamina -= 10\r\n                    self.dashing = True\r\n            else:\r\n                self.dashing = False\r\n        if self.stamina <= 100:\r\n            self.stamina += 5 * dt\r\n        for p in self.av_power:\r\n            p.move(dt)\r\n\r\n    def point_towards(self, target_pt, keys, dt):\r\n        if keys[pygame.K_SPACE]:\r\n            adjacent = target_pt[0] - self.position[0]\r\n            opposite = -(target_pt[1] - self.position[1])\r\n            self.orientation = math.degrees(math.atan2(opposite, adjacent)) - 90\r\n            self.stamina -= 6 * dt\r\n        else:\r\n            self.orientation = 0\r\n            self.center = 0\r\n\r\n    def collision(self, collide_list, dashing=False):\r\n\r\n        sfactor = 0.65\r\n        stamina_bar = pygame.Rect((self.position[0] - (self.stamina / 2), self.position[1], self.stamina, 10))\r\n\r\n        for object in collide_list:\r\n\r\n            if not object.is_attack:\r\n                circle_box = pygame.Rect(int(object.position[0] - object.radius),\r\n                                         int(object.position[1] - object.radius), object.radius * 2, object.radius * 2)\r\n                if stamina_bar.colliderect(circle_box):\r\n                    self.ball_bounce = True\r\n\r\n\r\n            elif object.is_attack and dashing == False:\r\n\r\n                if stamina_bar.colliderect(object.rect):\r\n                    if self.stamina >= 1:\r\n                        self.stamina -= sfactor\r\n\r\n    def pixel_collision(self, pixel_list, ball_x, ball_y, ball_width, direction):\r\n\r\n        for p in pixel_list:\r\n            circle_box = pygame.Rect(int(ball_x - ball_width), int(ball_y - ball_width), 10, 10)\r\n            if circle_box.colliderect(p.get_rect()):\r\n                if self.ball.current_powerup == \"Heavy\":\r\n                    if ball_x < p.right_point[0] and ball_x < p.top_point[0] and ball_x < p.bottom_point[0] and ball_x >= \\\r\n                            p.left_point[0]:\r\n                        pixel_list.remove(p)\r\n                    elif ball_x > p.left_point[0] and ball_x > p.top_point[0] and ball_x > p.bottom_point[0] and ball_x <= \\\r\n                            p.right_point[0]:\r\n                        pixel_list.remove(p)\r\n                    elif ball_y > p.left_point[1] and ball_y > p.top_point[1] and ball_y > p.right_point[1] and ball_y <= \\\r\n                            p.bottom_point[1]:\r\n                        pixel_list.remove(p)\r\n                    elif ball_y < p.left_point[1] and ball_y < p.top_point[1] and ball_y < p.right_point[1] and ball_y >= \\\r\n                            p.bottom_point[1]:\r\n                        pixel_list.remove(p)\r\n                else:\r\n                    if ball_x < p.right_point[0] and ball_x < p.top_point[0] and ball_x < p.bottom_point[0] and ball_x >= \\\r\n                            p.left_point[0]:\r\n                        direction[0] = direction[0] * -1  # LEFT\r\n                        if p.toughness != 0:\r\n                            p.toughness -= 1\r\n                        else:\r\n                            pixel_list.remove(p)\r\n                    elif ball_x > p.left_point[0] and ball_x > p.top_point[0] and ball_x > p.bottom_point[0] and ball_x <= \\\r\n                            p.right_point[0]:\r\n                        direction[0] = direction[0] * -1  # RIGHT\r\n                        if p.toughness != 0:\r\n                            p.toughness -= 1\r\n                        else:\r\n                            pixel_list.remove(p)\r\n                    elif ball_y > p.left_point[1] and ball_y > p.top_point[1] and ball_y > p.right_point[1] and ball_y <= \\\r\n                            p.bottom_point[1]:\r\n                        direction[1] = direction[1] * -1  # BOTTOM\r\n                        if p.toughness != 0:\r\n                            p.toughness -= 1\r\n                        else:\r\n                            pixel_list.remove(p)\r\n                    elif ball_y < p.left_point[1] and ball_y < p.top_point[1] and ball_y < p.right_point[1] and ball_y >= \\\r\n                            p.bottom_point[1]:\r\n                        direction[1] = direction[1] * -1  # TOP\r\n                        if p.toughness != 0:\r\n                            p.toughness -= 1\r\n                        else:\r\n                            pixel_list.remove(p)\r\n                if p.powerup is not None:\r\n                    self.av_power.append(power_ups.Power_ups(copy.deepcopy(p.pos), p.powerup, self.win))\r\n                self.ball.av_pos = self.av_power\r\n                self.score += 5\r\n\r\n\r\n    def distance(self, x1, y1, x2, y2):\r\n        space = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5\r\n\r\n        return space\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Pixel Break/paddle.py b/Pixel Break/paddle.py
+--- a/Pixel Break/paddle.py	(revision 64b3765fdda4c07505a0ee2977084d3e298e37f2)
++++ b/Pixel Break/paddle.py	(date 1618950865057)
+@@ -18,6 +18,8 @@
+         self.ball = ball
+         self.score = 0
+         self.av_power = []
++        self.i_frame = 1
++        self.i_currtime = 0
+ 
+     def draw(self):
+         final_surf = pygame.transform.scale(self.actual_stamina, (int(self.stamina), 10))
+@@ -53,6 +55,7 @@
+             # self.move(1, dt)
+             self.position[0] += self.speed * dt
+ 
++
+             if event.type == pygame.KEYDOWN:
+                 if event.key == pygame.K_LSHIFT and self.stamina >= 10:
+                     self.position[0] = 100 + self.position[0]
+@@ -65,8 +68,12 @@
+                     self.position[0] = self.position[0] - 100
+                     self.stamina -= 10
+                     self.dashing = True
+-            else:
++        if self.dashing:
++            self.i_currtime += dt
++            if self.i_currtime >= self.i_frame:
+                 self.dashing = False
++                self.i_currtime = 0
++
+         if self.stamina <= 100:
+             self.stamina += 5 * dt
+         for p in self.av_power:
+@@ -77,12 +84,13 @@
+             adjacent = target_pt[0] - self.position[0]
+             opposite = -(target_pt[1] - self.position[1])
+             self.orientation = math.degrees(math.atan2(opposite, adjacent)) - 90
+-            self.stamina -= 6 * dt
++            if self.stamina >= 10:
++                self.stamina -= 6 * dt
+         else:
+             self.orientation = 0
+             self.center = 0
+ 
+-    def collision(self, collide_list, dashing=False):
++    def collision(self, collide_list):
+ 
+         sfactor = 0.65
+         stamina_bar = pygame.Rect((self.position[0] - (self.stamina / 2), self.position[1], self.stamina, 10))
+@@ -96,11 +104,12 @@
+                     self.ball_bounce = True
+ 
+ 
+-            elif object.is_attack and dashing == False:
++            elif object.is_attack and self.dashing == False:
+ 
+                 if stamina_bar.colliderect(object.rect):
+                     if self.stamina >= 1:
+                         self.stamina -= sfactor
++                        print("hit")
+ 
+     def pixel_collision(self, pixel_list, ball_x, ball_y, ball_width, direction):
+ 
+@@ -153,6 +162,7 @@
+                     self.av_power.append(power_ups.Power_ups(copy.deepcopy(p.pos), p.powerup, self.win))
+                 self.ball.av_pos = self.av_power
+                 self.score += 5
++                self.ball.score = self.score
+ 
+ 
+     def distance(self, x1, y1, x2, y2):
+Index: Pixel Break/Leaderboard.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Pixel Break/Leaderboard.py b/Pixel Break/Leaderboard.py
+new file mode 100644
+--- /dev/null	(date 1618959083641)
++++ b/Pixel Break/Leaderboard.py	(date 1618959083641)
+@@ -0,0 +1,51 @@
++import pygame
++
++# starting pint from the top = 160
++# hight of boxes = 24
++# space between each box = 46
++
++class Leaderboard:
++    def __init__(self):
++        self.file = "High_scores.txt"
++        self.font = pygame.font.Font("font\\pixle_font\\Pixle_Font.ttf", 24)
++
++    def update(self, score):
++        list = []
++        new_score = score
++        f = open(self.file, "r+")
++        for line in f:
++            list.append(line.strip())
++        e = []
++        for score in list:
++            e.append(int(score.split(":")[1].strip()))
++
++        t = -1
++        for i in range(0, len(e) - 1):
++            if i == 13:
++                break
++            if new_score > e[i]:
++                t = i
++                break
++        print(t)
++        if t != -1:
++            name = input("Please Enter Name For LeaderBoard")
++            highschoreer = name + ": " + str(new_score)
++            list.insert(t, highschoreer)
++        if len(e) < 12:
++            name = input("Please Enter Name For LeaderBoard")
++            highschoreer = name + ": " + str(new_score)
++            list.append(highschoreer)
++        f.close()
++        f = open(self.file, "w")
++        for i in list:
++            f.write(i + "\n")
++
++        if name is not None:
++            mode = "leaderboard"
++
++    def draw(self, win):
++        f = open(self.file, "r")
++        for r,l in zip(range(0, 11),f):
++            text = self.font.render(l[:len(l)-1], True, (0, 167, 93))
++            win.blit(text,((win.get_width() / 2) - (text.get_width() / 2), 160 + (46 * r)))
++
+Index: Pixel Break/main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pygame\r\nimport gameui\r\nimport paddle\r\nimport ball\r\nimport game_map\r\nimport Attacks\r\nimport random\r\nimport bricks\r\npygame.init()\r\n\r\nwin_w = 600\r\nwin_h = 800\r\nwin = pygame.display.set_mode((win_w, win_h))\r\nbachground = pygame.Surface((win_w, win_h))\r\nboss_screen = pygame.Surface((win_w, win_h))\r\nfont = pygame.font.Font(\"font\\\\pixle_font\\\\Pixle_Font.ttf\", 24)\r\nattk_exists = False\r\nattk_timer = 2\r\nattk_type = 0\r\nclock = pygame.time.Clock()\r\ngame_ui = gameui.GameUI(win)\r\nball = ball.Ball(0, 0, win)\r\npaddle = paddle.Paddle(win, 400, 700, ball)\r\ncur_map = game_map.Map(\"BossMaps\\\\Litch.tmx\")\r\nbackground = pygame.image.load(\"images\\\\Background.png\")\r\ndone = False\r\ncollide_list = [ball]\r\nleft_attk = None\r\n# game state/mode\r\nmode = \"title\"\r\nwhile not done:\r\n    dt = clock.tick() / 1000\r\n    event = pygame.event.poll()\r\n    keys = pygame.key.get_pressed()\r\n    mPos = pygame.mouse.get_pos()\r\n    mClick = pygame.mouse.get_pressed()\r\n    health = len(cur_map.bricks)\r\n\r\n    # Drawing\r\n    # Modes and UI ------------------------------------------------------------------------\r\n    # return to title screen / main menu\r\n    if game_ui.button_back_collider.collidepoint(mPos) and mClick[0]:\r\n        mode = \"title\"\r\n    # Modes --\r\n    # title\r\n    if mode == \"title\":\r\n        game_ui.draw()\r\n        game_ui.draw_hovered()\r\n        # ball positive, movement resets/freezes\r\n        ball.position = paddle.position\r\n        ball.move(0)\r\n        # lives counter resets\r\n        # ball.life_lost = 0\r\n        # menu buttons --\r\n        # start game\r\n        if game_ui.button_start_collider.collidepoint(mPos) and mClick[0]:\r\n            mode = \"game\"\r\n        # quit game\r\n        elif game_ui.button_quit_collider.collidepoint(mPos) and mClick[0]:\r\n            mode = \"quit\"\r\n        # credits\r\n        elif game_ui.button_credits_collider.collidepoint(mPos) and mClick[0]:\r\n            mode = \"credits\"\r\n        # leaderboard\r\n        elif game_ui.button_leaderboard_collider.collidepoint(mPos) and mClick[0]:\r\n            mode = \"leaderboard\"\r\n    # game\r\n    if mode == \"game\":\r\n        # Movement\r\n        paddle.point_towards(mPos, keys, dt)\r\n        paddle.handle_input(dt, keys, event)\r\n        # ball.shadow(dt, paddle.position)\r\n\r\n        # Collision\r\n        paddle.collision(collide_list, paddle.dashing)\r\n        # paddle.pixel_collision(cur_map.bricks, ball.shadow_ball_pos[0], ball.shadow_ball_pos[1], 5, ball.shadow_dir)\r\n\r\n        paddle.pixel_collision(cur_map.bricks, ball.position[0], ball.position[1], 5, ball.direction)\r\n\r\n        paddle.collide()\r\n\r\n        text = font.render((\"Score: \" + str(paddle.score)), True, (255, 255, 255))\r\n        win.fill((0, 0, 0))\r\n        win.blit(bachground, (0, 0))\r\n        win.blit(text, (0, 770))\r\n        bachground.blit(background, (0, 0))\r\n        game_ui.draw_return()\r\n        game_ui.draw_return_hov()\r\n        paddle.draw()\r\n        ball.draw()\r\n        ball.move(dt)\r\n        ball.collision(paddle.position, mPos, paddle.stamina)\r\n        cur_map.render(win, grid_color=None)\r\n        ball.power(dt, paddle.position, paddle.stamina, mClick)\r\n        if attk_exists == False:\r\n\r\n            attk_timer -= 1 * dt\r\n            attk_type = 0\r\n            if attk_timer <= 0:\r\n                a = random.randint(1, 5)\r\n                b = random.randint(1, 5)\r\n                if health <= (health / 2):\r\n                    attk_type = random.randint(1, 10)\r\n                else:\r\n                    attk_type = a + b\r\n\r\n                left_attk = Attacks.Attacks(attk_type, paddle.position[1], paddle.actual_stamina.get_width(),\r\n                                            600, 800, paddle.position[0], collide_list, paddle.position[1])\r\n\r\n                collide_list.append(left_attk)\r\n\r\n                attk_exists = True\r\n\r\n        if attk_exists == True:\r\n\r\n            left_attk.update(dt, win)\r\n\r\n            if left_attk.direction != 0:\r\n\r\n                left_attk.draw(win, dt)\r\n            else:\r\n                if len(collide_list) >= 1 and left_attk.attack2 == None:\r\n                    collide_list.remove(left_attk)\r\n\r\n                    attk_exists = False\r\n                    attk_timer = 2\r\n                if left_attk.attack3 != None:\r\n                    if left_attk.attack3.direction == 0:\r\n                        if collide_list.count(left_attk.attack3) == 1:\r\n                            collide_list.remove(left_attk.attack3)\r\n                if left_attk.attack2 != None:\r\n                    if left_attk.attack2.direction == 0:\r\n                        if collide_list.count(left_attk.attack2) == 1:\r\n                            collide_list.remove(left_attk.attack2)\r\n\r\n                        attk_exists = False\r\n                        attk_timer = 2\r\n\r\n        ball.game_win(health)\r\n        ball.game_over()\r\n    # exit\r\n    elif mode == \"quit\":\r\n        done = True\r\n    # credits\r\n    elif mode == \"credits\":\r\n        win.fill((0, 0, 0))\r\n        win.blit(game_ui.credits_scr, (0, 0))\r\n        game_ui.draw_return()\r\n        game_ui.draw_return_hov()\r\n    # leaderboard\r\n    elif mode == \"leaderboard\":\r\n        win.fill((0, 0, 0))\r\n        win.blit(game_ui.leaderboard_scr, (0, 0))\r\n        game_ui.draw_return()\r\n        game_ui.draw_return_hov()\r\n    # --------------------------------------------------------------------------------------\r\n    pygame.display.flip()\r\n\r\n    # Exiting\r\n    if event.type == pygame.KEYDOWN:\r\n        if event.key == pygame.K_ESCAPE:\r\n            done = True\r\n    if event.type == pygame.QUIT:\r\n        done = True\r\n\r\n\r\n\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Pixel Break/main.py b/Pixel Break/main.py
+--- a/Pixel Break/main.py	(revision 64b3765fdda4c07505a0ee2977084d3e298e37f2)
++++ b/Pixel Break/main.py	(date 1618958930909)
+@@ -5,6 +5,7 @@
+ import game_map
+ import Attacks
+ import random
++import Leaderboard
+ import bricks
+ pygame.init()
+ 
+@@ -19,7 +20,8 @@
+ attk_type = 0
+ clock = pygame.time.Clock()
+ game_ui = gameui.GameUI(win)
+-ball = ball.Ball(0, 0, win)
++leaderboard = Leaderboard.Leaderboard()
++ball = ball.Ball(0, 0, win, leaderboard)
+ paddle = paddle.Paddle(win, 400, 700, ball)
+ cur_map = game_map.Map("BossMaps\\Litch.tmx")
+ background = pygame.image.load("images\\Background.png")
+@@ -35,7 +37,7 @@
+     mPos = pygame.mouse.get_pos()
+     mClick = pygame.mouse.get_pressed()
+     health = len(cur_map.bricks)
+-
++    leaderboard.draw(win)
+     # Drawing
+     # Modes and UI ------------------------------------------------------------------------
+     # return to title screen / main menu
+@@ -72,11 +74,10 @@
+         # ball.shadow(dt, paddle.position)
+ 
+         # Collision
+-        paddle.collision(collide_list, paddle.dashing)
++        paddle.collision(collide_list)
+         # paddle.pixel_collision(cur_map.bricks, ball.shadow_ball_pos[0], ball.shadow_ball_pos[1], 5, ball.shadow_dir)
+ 
+         paddle.pixel_collision(cur_map.bricks, ball.position[0], ball.position[1], 5, ball.direction)
+-
+         paddle.collide()
+ 
+         text = font.render(("Score: " + str(paddle.score)), True, (255, 255, 255))
+@@ -151,6 +152,7 @@
+     elif mode == "leaderboard":
+         win.fill((0, 0, 0))
+         win.blit(game_ui.leaderboard_scr, (0, 0))
++        leaderboard.draw(win)
+         game_ui.draw_return()
+         game_ui.draw_return_hov()
+     # --------------------------------------------------------------------------------------
+Index: Pixel Break/bricks.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pygame\r\nimport random\r\n\r\nclass Brick:\r\n    def __init__(self, pos, wh, code, toughscore = 1):\r\n        self.col_w_h = wh\r\n        half_x = wh[0]/2\r\n        half_y = wh[1]/2\r\n        self.pos = [pos[0] + 135, pos[1] + 120]\r\n        self.top_point      = (self.pos[0] + half_x, self.pos[1])\r\n        self.bottom_point   = (self.pos[0] + half_x, self.pos[1] + wh[1])\r\n        self.right_point    = (self.pos[0] + wh[0], self.pos[1] + half_y)\r\n        self.left_point     = (self.pos[0],  self.pos[1] + half_y)\r\n        self.rect = pygame.Rect(self.pos[0], self.pos[1], wh[0], wh[1])\r\n        self.code = code\r\n        self.powerup = None\r\n        self.toughness = toughscore\r\n        if random.randint(0, 100) == 100:\r\n            if random.randint(0, 1) == 0:\r\n                self.powerup = \"Heavy\"\r\n            elif random.randint(0, 1) == 1:\r\n                self.powerup = \"Speed\"\r\n\r\n    def get_rect(self):\r\n        return self.rect
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Pixel Break/bricks.py b/Pixel Break/bricks.py
+--- a/Pixel Break/bricks.py	(revision 64b3765fdda4c07505a0ee2977084d3e298e37f2)
++++ b/Pixel Break/bricks.py	(date 1618945280970)
+@@ -16,9 +16,10 @@
+         self.powerup = None
+         self.toughness = toughscore
+         if random.randint(0, 100) == 100:
+-            if random.randint(0, 1) == 0:
++            ran = random.randint(0, 1)
++            if ran == 0:
+                 self.powerup = "Heavy"
+-            elif random.randint(0, 1) == 1:
++            elif ran == 1:
+                 self.powerup = "Speed"
+ 
+     def get_rect(self):
+Index: Pixel Break/ball.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pygame\r\nimport vector\r\n\r\n\r\nclass Ball:\r\n    def __init__(self, x, y, surf):\r\n        self.position = [x, y]\r\n        self.win = surf\r\n        self.direction = [1, 1]\r\n        self.img = pygame.image.load(\"images\\\\Ball.png\")\r\n        self.shadow_ball = pygame.image.load(\"images\\\\shadow ball.png\")\r\n        self.speed_img = pygame.image.load(\"images\\\\speed_power_up.png\")\r\n        self.heavy_img = pygame.image.load(\"images\\\\heavy_power_up.png\")\r\n        self.frame = pygame.image.load(\"images\\\\Power_up_frame.png\")\r\n        self.img_scale = pygame.transform.scale(self.img, (10, 10))\r\n        self.speed = 250\r\n        self.radius = 5\r\n        self.is_attack = False\r\n        # player life --\r\n        # image\r\n        self.life_img = pygame.image.load(\"images\\\\player life.png\").convert()\r\n        self.life1 = pygame.transform.scale(self.life_img, (20, 20))\r\n        self.life2 = pygame.transform.scale(self.life_img, (20, 20))\r\n        self.life3 = pygame.transform.scale(self.life_img, (20, 20))\r\n        self.life_img_all = [self.life1, self.life2, self.life3]\r\n        # count\r\n        self.life_all = 3\r\n        self.life_lost = 0\r\n        # game over screen --\r\n        self.game_over_img = pygame.image.load(\"images\\\\game over.png\")\r\n        # game win screen --\r\n        self.game_win_img = pygame.image.load(\"images\\\\Game Text - Win.png\")\r\n\r\n        self.end = False\r\n        self.shadow_ball_pos = [x, y]\r\n        self.shadow_dir = [1, 1]\r\n        self.shadow_speed = 500\r\n        self.stay = False\r\n        self.powerup = None\r\n        self.time = 0\r\n        self.bounce = 0\r\n        self.usable = []\r\n        self.current_powerup = None\r\n        self.brick_pos = None\r\n        self.point = 0\r\n        self.l_click = False\r\n        self.r_click = False\r\n        self.av_pos = []\r\n\r\n\r\n\r\n    def draw(self):\r\n        self.win.blit(self.img_scale, self.position)\r\n        # player lives\r\n        if self.life_lost == 0:\r\n            self.draw_lives_3()\r\n        elif self.life_lost == 1:\r\n            self.draw_lives_2()\r\n        elif self.life_lost == 2:\r\n            self.win.blit(self.life_img_all[2], (self.win.get_width() - 30, self.win.get_height() - 790))\r\n        # self.win.blit(self.shadow_ball, self.shadow_ball_pos)\r\n\r\n    def move(self, dt):\r\n        self.position = [(self.position[0] + self.direction[0] * dt * self.speed), (self.position[1] + self.direction[1]\r\n                                                                                    * dt * self.speed)]\r\n\r\n    def shadow(self, dt, paddle_pos):\r\n        if not self.end:\r\n            self.shadow_ball_pos = [(self.shadow_ball_pos[0] + self.shadow_dir[0] * dt * self.shadow_speed),\r\n                                    (self.shadow_ball_pos[1] +\r\n                                     self.shadow_dir[1] * dt * self.shadow_speed)]\r\n        if self.shadow_ball_pos[1] >= paddle_pos[1]:\r\n            self.end = True\r\n            self.stay = True\r\n\r\n        if self.stay:\r\n            self.shadow_ball_pos = self.position\r\n            self.shadow_dir = self.direction\r\n\r\n        if self.shadow_ball_pos[0] <= 0:\r\n            self.shadow_ball_pos[0] = 0\r\n            self.shadow_dir = [-1 * self.shadow_dir[0], self.shadow_dir[1]]\r\n        if self.shadow_ball_pos[0] + 10 >= self.win.get_width():\r\n            self.shadow_ball_pos[0] = self.win.get_width() - 10\r\n            self.shadow_dir = [-1 * self.shadow_dir[0], self.shadow_dir[1]]\r\n        if self.shadow_ball_pos[1] <= 0:\r\n            self.shadow_ball_pos[1] = 0\r\n            self.shadow_dir = [self.shadow_dir[0], -1 * self.shadow_dir[1]]\r\n        if self.shadow_ball_pos[1] + 10 >= self.win.get_height():\r\n            self.shadow_ball_pos[1] = self.win.get_height() - 10\r\n            self.shadow_dir = [self.shadow_dir[0], -1 * self.shadow_dir[1]]\r\n\r\n    def dot(self, v1, v2):\r\n        \"\"\"Preforming the dot product\"\"\"\r\n        if v1.dim == v2.dim:\r\n            i = 0\r\n            sum = 0\r\n            while i < v1.dim:\r\n                d = v1[i] * v2[i]\r\n                sum += d\r\n                i += 1\r\n            return sum\r\n\r\n    def collision(self, paddle_pos, target_point, stamina):\r\n        v = [target_point[0] - paddle_pos[0], target_point[1] - paddle_pos[1]]\r\n        mag_v = (v[0] ** 2 + v[1] ** 2) ** (1 / 2)\r\n        unit_v = [v[0] / mag_v, v[1] / mag_v]\r\n        unit_perp = vector.Vector(-unit_v[1], unit_v[0])\r\n        dir_to_ball = vector.Vector(self.position[0] - paddle_pos[0], self.position[1] - paddle_pos[1])\r\n        d = self.dot(dir_to_ball, vector.Vector(unit_v[0], unit_v[1]))\r\n        e = self.dot(dir_to_ball, unit_perp)\r\n\r\n        if not pygame.key.get_pressed()[pygame.K_SPACE]:\r\n            self.end = False\r\n            self.stay = False\r\n            if pygame.Rect(self.position[0], self.position[1], 10, 10).colliderect(\r\n                    pygame.Rect(paddle_pos[0] - (stamina / 2), paddle_pos[1] - 5, stamina, 10)):\r\n\r\n                if unit_v[1] > 0:\r\n                    if unit_v[0] >= 0:\r\n                        self.direction = [1, -1]\r\n                    if unit_v[0] <= 0:\r\n                        self.direction = [-1, -1]\r\n                    if self.current_powerup == \"Heavy\":\r\n                        self.bounce = self.bounce + 1\r\n                else:\r\n                    self.direction = unit_v\r\n                    if self.current_powerup == \"Heavy\":\r\n                        self.bounce = self.bounce + 1\r\n\r\n        elif pygame.key.get_pressed()[pygame.K_SPACE]:\r\n            self.end = False\r\n            self.stay = False\r\n            if not (abs(d) > 15 or abs(e) > int(stamina)):\r\n                if unit_v[1] > 0:\r\n                    if unit_v[0] >= 0:\r\n                        self.direction = [1, -1]\r\n                    if unit_v[0] <= 0:\r\n                        self.direction = [-1, -1]\r\n                    if self.current_powerup == \"Heavy\":\r\n                        self.bounce = self.bounce + 1\r\n                else:\r\n                    self.direction = unit_v\r\n                    if self.current_powerup == \"Heavy\":\r\n                        self.bounce = self.bounce + 1\r\n\r\n        if self.position[0] <= 0:\r\n            self.position[0] = 0\r\n            self.direction = [-1 * self.direction[0], self.direction[1]]\r\n        if self.position[0] + 10 >= self.win.get_width():\r\n            self.position[0] = self.win.get_width() - 10\r\n            self.direction = [-1 * self.direction[0], self.direction[1]]\r\n        if self.position[1] <= 0:\r\n            self.position[1] = 0\r\n            self.direction = [self.direction[0], -1 * self.direction[1]]\r\n        if self.position[1] + 10 >= self.win.get_height():\r\n            # self.position[1] = self.win.get_height() - 10\r\n            # self.direction = [self.direction[0], -1 * self.direction[1]]\r\n            self.life_lost += 1\r\n            self.position = paddle_pos\r\n\r\n    def draw_lives_3(self):\r\n        self.win.blit(self.life_img_all[2], (self.win.get_width() - 30, self.win.get_height() - 790))\r\n        self.win.blit(self.life_img_all[1], (self.win.get_width() - 60, self.win.get_height() - 790))\r\n        self.win.blit(self.life_img_all[0], (self.win.get_width() - 90, self.win.get_height() - 790))\r\n\r\n    def draw_lives_2(self):\r\n        self.win.blit(self.life_img_all[2], (self.win.get_width() - 30, self.win.get_height() - 790))\r\n        self.win.blit(self.life_img_all[1], (self.win.get_width() - 60, self.win.get_height() - 790))\r\n\r\n    def game_over(self):\r\n        if self.life_lost >= self.life_all:\r\n            self.win.fill((0, 0, 0))\r\n            self.win.blit(self.game_over_img, (0, 0))\r\n\r\n    def game_win(self, health):\r\n        if health <= 0:\r\n            self.win.fill((0, 0, 0))\r\n            self.win.blit(self.game_win_img, (self.win.get_width() / 2 -\r\n                                              self.game_win_img.get_width() / 2, self.win.get_height() - 700))\r\n\r\n    def power(self, dt, paddle_pos, stamina, mouse_click):\r\n        for p in self.av_pos:\r\n            if pygame.Rect(p.pos[0], p.pos[1], 10, 10).colliderect(\r\n                    pygame.Rect(paddle_pos[0] - (stamina / 2), paddle_pos[1] - 5, stamina, 10)):\r\n                if len(self.usable) <= 1:\r\n                    self.usable.append(p.power_up)\r\n                self.av_pos.remove(p)\r\n            elif p.pos[1] >= self.win.get_height():\r\n                self.av_pos.remove(p)\r\n        if len(self.usable) >= 1:\r\n            if mouse_click[0]:\r\n                self.l_click = True\r\n            if self.l_click:\r\n                self.current_powerup = self.usable[0]\r\n                if self.current_powerup == \"Heavy\":\r\n                    self.heavy()\r\n                if self.current_powerup == \"Speed\":\r\n                    self.speedy_boy(dt)\r\n        if len(self.usable) == 2:\r\n            if mouse_click[2]:\r\n                self.r_click = True\r\n            if self.r_click:\r\n                self.current_powerup = self.usable[1]\r\n                if self.current_powerup == \"Heavy\":\r\n                    self.heavy()\r\n                if self.current_powerup == \"Speed\":\r\n                    self.speedy_boy(dt)\r\n        if len(self.usable) > 0:\r\n            if self.usable[0] == \"Heavy\":\r\n                self.win.blit(self.heavy_img, (500, 750))\r\n            if self.usable[0] == \"Speed\":\r\n                self.win.blit(self.speed_img, (500, 750))\r\n            if len(self.usable) > 1:\r\n                if self.usable[1] == \"Heavy\":\r\n                    self.win.blit(self.heavy_img, (530, 750))\r\n                if self.usable[1] == \"Speed\":\r\n                    self.win.blit(self.speed_img, (530, 750))\r\n\r\n        if self.current_powerup == None:\r\n            self.r_click = False\r\n            self.l_click = False\r\n\r\n    def heavy(self):\r\n        if self.position[0] <= 0:\r\n            self.bounce = self.bounce + 1\r\n        if self.position[0] + 10 >= self.win.get_width():\r\n            self.bounce = self.bounce + 1\r\n        if self.position[1] <= 0:\r\n            self.bounce = self.bounce + 1\r\n        if self.position[1] + 10 >= self.win.get_height():\r\n            self.current_powerup = None\r\n            self.usable.pop(0)\r\n        if self.bounce >= 2:\r\n            self.current_powerup = None\r\n            self.usable.pop(0)\r\n            self.bounce = 0\r\n\r\n    def speedy_boy(self, dt):\r\n        if self.time <= 2:\r\n            self.speed = 500\r\n            self.time += dt\r\n\r\n        if self.time > 2:\r\n\r\n            self.speed = 250\r\n            self.time = 0\r\n            self.usable.pop(0)\r\n            self.current_powerup = None\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Pixel Break/ball.py b/Pixel Break/ball.py
+--- a/Pixel Break/ball.py	(revision 64b3765fdda4c07505a0ee2977084d3e298e37f2)
++++ b/Pixel Break/ball.py	(date 1618958930952)
+@@ -2,8 +2,10 @@
+ import vector
+ 
+ 
++
+ class Ball:
+-    def __init__(self, x, y, surf):
++    def __init__(self, x, y, surf, leaderboard):
++        self.leaderboard = leaderboard
+         self.position = [x, y]
+         self.win = surf
+         self.direction = [1, 1]
+@@ -46,6 +48,8 @@
+         self.l_click = False
+         self.r_click = False
+         self.av_pos = []
++        self.score = 0
++
+ 
+ 
+ 
+@@ -172,12 +176,17 @@
+         if self.life_lost >= self.life_all:
+             self.win.fill((0, 0, 0))
+             self.win.blit(self.game_over_img, (0, 0))
++            pygame.display.flip()
++            self.leaderboard.update(self.score)
+ 
+     def game_win(self, health):
+         if health <= 0:
+             self.win.fill((0, 0, 0))
+             self.win.blit(self.game_win_img, (self.win.get_width() / 2 -
+                                               self.game_win_img.get_width() / 2, self.win.get_height() - 700))
++            pygame.display.flip()
++            self.leaderboard.update(self.score)
++
+ 
+     def power(self, dt, paddle_pos, stamina, mouse_click):
+         for p in self.av_pos:

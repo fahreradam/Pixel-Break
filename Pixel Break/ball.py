@@ -2,8 +2,10 @@ import pygame
 import vector
 
 
+
 class Ball:
-    def __init__(self, x, y, surf):
+    def __init__(self, x, y, surf, leaderboard):
+        self.leaderboard = leaderboard
         self.position = [x, y]
         self.win = surf
         self.direction = [1, 1]
@@ -46,6 +48,8 @@ class Ball:
         self.l_click = False
         self.r_click = False
         self.av_pos = []
+        self.score = 0
+
 
 
 
@@ -172,12 +176,15 @@ class Ball:
         if self.life_lost >= self.life_all:
             self.win.fill((0, 0, 0))
             self.win.blit(self.game_over_img, (0, 0))
+            # self.leaderboard.update(self.score, self.win, mode)
 
     def game_win(self, health):
         if health <= 0:
             self.win.fill((0, 0, 0))
             self.win.blit(self.game_win_img, (self.win.get_width() / 2 -
                                               self.game_win_img.get_width() / 2, self.win.get_height() - 700))
+            # self.leaderboard.update(self.score, self.win, mode)
+
 
     def power(self, dt, paddle_pos, stamina, mouse_click):
         for p in self.av_pos:

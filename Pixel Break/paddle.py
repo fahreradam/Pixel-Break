@@ -18,6 +18,8 @@ class Paddle:
         self.ball = ball
         self.score = 0
         self.av_power = []
+        self.i_frame = 1
+        self.i_currtime = 0
 
     def draw(self):
         final_surf = pygame.transform.scale(self.actual_stamina, (int(self.stamina), 10))
@@ -53,6 +55,7 @@ class Paddle:
             # self.move(1, dt)
             self.position[0] += self.speed * dt
 
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LSHIFT and self.stamina >= 10:
                     self.position[0] = 100 + self.position[0]
@@ -65,8 +68,12 @@ class Paddle:
                     self.position[0] = self.position[0] - 100
                     self.stamina -= 10
                     self.dashing = True
-            else:
+        if self.dashing:
+            self.i_currtime += dt
+            if self.i_currtime >= self.i_frame:
                 self.dashing = False
+                self.i_currtime = 0
+
         if self.stamina <= 100:
             self.stamina += 5 * dt
         for p in self.av_power:
@@ -77,12 +84,13 @@ class Paddle:
             adjacent = target_pt[0] - self.position[0]
             opposite = -(target_pt[1] - self.position[1])
             self.orientation = math.degrees(math.atan2(opposite, adjacent)) - 90
-            self.stamina -= 6 * dt
+            if self.stamina >= 10:
+                self.stamina -= 6 * dt
         else:
             self.orientation = 0
             self.center = 0
 
-    def collision(self, collide_list, dashing=False):
+    def collision(self, collide_list):
 
         sfactor = 0.8
         stamina_bar = pygame.Rect((self.position[0] - (self.stamina / 2), self.position[1], self.stamina, 10))
@@ -96,7 +104,7 @@ class Paddle:
                     self.ball_bounce = True
 
 
-            elif object.is_attack and dashing == False:
+            elif object.is_attack and self.dashing == False:
 
                 if stamina_bar.colliderect(object.rect):
                     if self.stamina >= 1:
@@ -153,6 +161,7 @@ class Paddle:
                     self.av_power.append(power_ups.Power_ups(copy.deepcopy(p.pos), p.powerup, self.win))
                 self.ball.av_pos = self.av_power
                 self.score += 5
+                self.ball.score = self.score
 
 
     def distance(self, x1, y1, x2, y2):
