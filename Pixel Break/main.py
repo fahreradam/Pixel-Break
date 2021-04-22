@@ -53,6 +53,9 @@ pygame.mixer.music.fadeout(2000)  # setting the fade to happen over 200ms and th
 # to play the next track of music
 pygame.mixer.music.load("Sounds\\BossFight.mp3")  # this queues up the boss fight track for when we switch menus
 pygame.mixer.music.play(-1)     # the -1 this tells it to loop
+pygame.mixer.music.set_volume(0.4)
+# TO PLAY HIT SOUND EFFECTS
+hit_sound_dict[0].play().set_volume(1)
 
 
 # game state/mode
