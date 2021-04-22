@@ -45,7 +45,7 @@ dash_sound_dict = {
     }
 music_dict = {
     "MainMenu": pygame.mixer.Sound("Sounds\\MainMenu.ogg"),
-    "BossFight": pygame.mixer.Sound("Sounds\\BossFight.mp3")
+    "BossFight": pygame.mixer.Sound("Sounds\\BossFight.ogg")
 }
 
 
@@ -55,7 +55,7 @@ pygame.mixer.music.set_volume(0.4)  # sets volume of current track to 40%
 pygame.mixer.music.play(-1)     # the -1 this tells it to loop
 pygame.mixer.music.fadeout(2000)  # setting the fade to happen over 200ms and this will fade out the current track playing
 # to play the next track of music
-pygame.mixer.music.load("Sounds\\BossFight.mp3")  # this queues up the boss fight track for when we switch menus
+pygame.mixer.music.load("Sounds\\BossFight.ogg")  # this queues up the boss fight track for when we switch menus
 pygame.mixer.music.play(-1)     # the -1 this tells it to loop
 pygame.mixer.music.set_volume(0.4)
 # TO PLAY HIT SOUND EFFECTS
