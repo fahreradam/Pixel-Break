@@ -26,6 +26,16 @@ background = pygame.image.load("images\\Background.png")
 done = False
 collide_list = [ball]
 left_attk = None
+
+atk_volume = 0.8
+sound_dict = {
+    0: pygame.mixer.Sound("Sounds\\hit_0.ogg"),
+    1: pygame.mixer.Sound("Sounds\\hit_1.ogg"),
+    2: pygame.mixer.Sound("Sounds\\hit_2.ogg"),
+    3: pygame.mixer.Sound("Sounds\\hit_3.ogg"),
+    4: pygame.mixer.Sound("Sounds\\hit_4.ogg")
+    }
+
 # game state/mode
 mode = "title"
 while not done:
