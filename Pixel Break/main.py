@@ -30,6 +30,38 @@ background = pygame.image.load("images\\Background.png")
 done = False
 collide_list = [ball]
 left_attk = None
+
+atk_volume = 0.8
+hit_sound_dict = {
+    0: pygame.mixer.Sound("Sounds\\hit_0.ogg"),
+    1: pygame.mixer.Sound("Sounds\\hit_1.ogg"),
+    2: pygame.mixer.Sound("Sounds\\hit_2.ogg"),
+    3: pygame.mixer.Sound("Sounds\\hit_3.ogg"),
+    4: pygame.mixer.Sound("Sounds\\hit_4.ogg")
+    }
+dash_sound_dict = {
+    0: pygame.mixer.Sound("Sounds\\Dash_0.ogg"),
+    1: pygame.mixer.Sound("Sounds\\Dash_1.ogg")
+    }
+music_dict = {
+    "MainMenu": pygame.mixer.Sound("Sounds\\MainMenu.ogg"),
+    "BossFight": pygame.mixer.Sound("Sounds\\BossFight.mp3")
+}
+
+
+# EXAMPLE OF HOW TO PLAY SOUNDS FROM THE DICTS. - LANE
+pygame.mixer.music.load("Sounds\\MainMenu.ogg")  # loads up the main menu music
+pygame.mixer.music.set_volume(0.4)  # sets volume of current track to 40%
+pygame.mixer.music.play(-1)     # the -1 this tells it to loop
+pygame.mixer.music.fadeout(2000)  # setting the fade to happen over 200ms and this will fade out the current track playing
+# to play the next track of music
+pygame.mixer.music.load("Sounds\\BossFight.mp3")  # this queues up the boss fight track for when we switch menus
+pygame.mixer.music.play(-1)     # the -1 this tells it to loop
+pygame.mixer.music.set_volume(0.4)
+# TO PLAY HIT SOUND EFFECTS
+hit_sound_dict[0].play().set_volume(1)
+
+
 # game state/mode
 while not done:
     dt = clock.tick() / 1000
