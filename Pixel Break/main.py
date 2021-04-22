@@ -28,13 +28,27 @@ collide_list = [ball]
 left_attk = None
 
 atk_volume = 0.8
-sound_dict = {
+hit_sound_dict = {
     0: pygame.mixer.Sound("Sounds\\hit_0.ogg"),
     1: pygame.mixer.Sound("Sounds\\hit_1.ogg"),
     2: pygame.mixer.Sound("Sounds\\hit_2.ogg"),
     3: pygame.mixer.Sound("Sounds\\hit_3.ogg"),
     4: pygame.mixer.Sound("Sounds\\hit_4.ogg")
     }
+dash_sound_dict = {
+    0: pygame.mixer.Sound("Sounds\\Dash_0.ogg"),
+    1: pygame.mixer.Sound("Sounds\\Dash_1.ogg")
+    }
+music_dict = {
+    "MainMenu": pygame.mixer.Sound("Sounds\\MainMenu.ogg"),
+    "BossFight": pygame.mixer.Sound("Sounds\\BossFight.mp3")
+}
+
+
+# EXAMPLE OF HOW TO PLAY SOUNDS FROM THE DICTS. - LANE
+music_dict["MainMenu"].set_volume(0.4)
+music_dict["MainMenu"].play()
+
 
 # game state/mode
 mode = "title"
