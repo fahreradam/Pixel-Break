@@ -38,6 +38,8 @@ class Attacks:
         self.d5 = 0.4
         self.d7 = 2
         self.d8 = 2
+        self.warning = pygame.image.load("images\\WeeWoo1.png")
+        self.ww_time = 1
         if other_x != 0:
             self.x = self.ox
 
@@ -167,7 +169,7 @@ class Attacks:
 
         self.dt = dt
 
-        if self.direction == 5: #HORIZONTAL
+        if self.direction == 5 and self.ww_time <= 0: #HORIZONTAL
 
             if self.wide < 30:
                 self.wide += self.speed * dt
@@ -179,7 +181,7 @@ class Attacks:
                 self.d5 -= 1 * dt
             if self.d5 <= 0:
                 self.direction = 0
-        if self.direction == 6: #HORIZONTAL
+        if self.direction == 6 and self.ww_time <= 0: #HORIZONTAL
 
             if self.wide < 30:
                 self.wide += self.speed * dt
@@ -196,7 +198,7 @@ class Attacks:
 
 
 
-        if self.direction == 7: #UP
+        if self.direction == 7 and self.ww_time <= 0: #UP
 
             if self.high < 200:
                 self.high += self.speed * dt
@@ -206,7 +208,7 @@ class Attacks:
             if self.y + self.high <= 0:
                 self.direction = 0
 
-        if self.direction == 4: #UP
+        if self.direction == 4 and self.ww_time <= 0: #UP
 
             if self.high < 200:
                 self.high += self.speed * dt
@@ -215,7 +217,7 @@ class Attacks:
             if self.y >= self.screen_h:
                 self.direction = 0
 
-        if self.direction == 8: #L
+        if self.direction == 8 and self.ww_time <= 0: #L
             if self.high < 200:
                 self.high += self.speed * dt
 
@@ -238,7 +240,7 @@ class Attacks:
                     self.direction = 6
 
 
-        if self.direction == 9: #SPLIT
+        if self.direction == 9 and self.ww_time <= 0: #SPLIT
             if self.high < 200:
                 self.high += self.speed * dt
 
@@ -255,7 +257,7 @@ class Attacks:
 
 
 
-        if self.direction == 3: #STAY
+        if self.direction == 3 and self.ww_time <= 0: #STAY
             if self.d7 <= 0:
                 self.direction = 0
             else:
@@ -266,7 +268,7 @@ class Attacks:
             self.attack3.update(dt, win)
             self.attack3.draw(win, dt)
 
-        if self.direction == 33: #STAY 2
+        if self.direction == 33 and self.ww_time <= 0: #STAY 2
             if self.d7 <= 0:
                 self.direction = 0
             else:
@@ -287,9 +289,20 @@ class Attacks:
             self.speed = 400
             self.timer = 2
             self.timer2 = 0
+            self.ww_time = 1
 
 
+        if self.ww_time >= 0:
 
+            self.ww_time -= 1 * dt
+
+            if self.direction != 0:
+                if self.x >= self.screen_w:
+                    win.blit(self.warning, (self.screen_w - self.warning.get_width(), self.y))
+                if self.y >= self.screen_h:
+                    win.blit(self.warning, (self.x, self.screen_h - self.warning.get_height()))
+                else:
+                    win.blit(self.warning, (self.x, self.y))
 
         if self.direction == 2: #HOMING
 
@@ -353,6 +366,7 @@ class Attacks:
             elif self.x >= self.screen_w - 30 and self.rebound2:
 
                 self.direction = 0
+
 
     def draw(self, win, dt):
         if self.direction == 5 or self.direction == 6 or self.direction == 7 or self.direction == 4 or self.direction == 3 or self.direction == 33:
